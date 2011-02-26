@@ -291,23 +291,22 @@ as input to the map and reduce functions.
 \section{Heat Transfer Problem}
 \subsection{Description of the problem}
 The problem we are dealing with is a classical problem of heat transfer in
-a squared area. The problem is solved by finding a solution for Laplace's equation,\\ \\
+a squared area. The problem is solved by finding a solution for Laplace's equation,\\ 
 \begin{center}
 \LARGE
-$\frac{\partial^2 \Phi }{\partial^2 x} + \frac{\partial^2 \Phi}{\partial^2 y} = 0$ \\ \\
+$\frac{\partial^2 \Phi }{\partial x^2} + \frac{\partial^2 \Phi}{\partial y^2} = 0$ 
 \normalsize
-\end{center}
+\end{center} 
 Where $\Phi$ is the unknown scalar potential that represents the heat at each point.
 %The method we are using is an \emph{stencil computation}. 
 In this heat transfer model, a squared surface with side length L is divided into a mesh,
-and each cell within the mesh is assigned an initial temperature value.The objective is
+and each cell within the mesh is assigned an initial temperature value. The objective is
 to approximate the steady-state solution for points within the mesh.
-
 The Jacobi iteration is a common iterative method used to solve Laplace's equation. We will
 use the Jacobi iteration to solve the equation and will base our explanation and pseudocode
-on the description found in \ref{}.
-Then, the temperature of each cell at time $t+1$ is computed averaging the temperature
-of the neighbouring cells at time at time $t$. 
+on the description found in \ref{Andrews}.\\
+In Jacobi iteration the temperature of each cell at time $t+1$ is computed averaging 
+the temperature of the neighbouring cells at time $t$. 
 The zoomed area of Figure \ref{fig:problem_div} explains how this division is performed, 
 and the resulting neighbours for a sample cell $h_{ij}$.
 Figure \ref{fig:problem_comp} explains how this computation takes place for a sample cell.\\
@@ -322,6 +321,52 @@ The squared area is divided into a mesh.
 \end{center}
 \end{figure}
 
+Now, let {\bf grid} and {\bf next} be two $(L+2)$x$(L+2)$ bidimensional matrixes. The increase in the 
+dimensions is to include the boundary conditions. The main computational loop of the 
+Jacobi iteration is as follows,
+
+
+\begin{figure}[H]
+\begin{center}
+\begin{lstlisting}
+while(true) {
+	// compute new values from all interior points
+	for(int i=1;i<=L;i++){
+		for(int j=1;j<=L;j++){
+			next[i,j] = (grid[i-1,j] + grid[i+1,j] +
+						 grid[i,j-1] + grid[i,j+1])/4;
+		}
+	}
+	iters++;
+	//Compute the maximum difference
+	maxdiff = 0.0f;
+	for(int i=1;i<=L;i++){
+		for(int j=1;j<=L;j++){
+			maxdiff = max(maxdiff, abs(next(i,j)-grid(i,j)));
+		}
+	}
+	
+	//Check for termination
+	if(maxdiff<C)
+		break;
+		
+	//Copy the new grid to prepare for next updates
+	for(int i=1;i<=L;i++){
+		for(int j=1;j<=L;j++){
+			grid(i,j) = next(i,j);
+		}
+	}
+}	
+\end{lstlisting}
+\caption{\label{list:pseudocode}\footnotesize
+Pseudocode for the Jacobi iteration adapted from \cite{Andrews}.}
+\end{center}
+\end{figure}
+
+
+
+
+
 \begin{figure}[H]
 \begin{center}
 \includegraphics[hiresbb=false,bb= 0 0 241mm 101mm, scale=0.47, 
@@ -334,9 +379,21 @@ neighbours.
 \end{center}
 \end{figure}
 
-Finally in Figure \ref{fig:problem_sample} an example is provided where four steps of
-the computation can be seen for some sample data.
 
+
+
+\subsubsection{Convergence}
+This calculation of temperatures based on the previous state of the neighbouring cells takes place
+until certain convergence criteria is met. To explain this, suppose that an initial state of the 
+surface included a heat source in certain cell. The temperature of this cell will remain the same
+during the whole computation.\smallskip \\
+Figure \ref{fig:problem_sample} is an example where four steps of
+the computation can be seen for some sample data.
+As one may suspect, it may come a point where all the cells surrounding the heat source will be at
+about the same temperature of the heat source, and eventually the whole surface will be at the same
+temperature of the heat source. This is what will match our physical intuition, and we will expect
+the model to behave in this way, but we are really more interested in studying how the heat flows
+in a point at time that is before that obvious limit.\\
 \begin{figure}[H]
 \begin{center}
 \includegraphics[hiresbb=false,bb= 0 0 278mm 221mm, scale=0.45, 
@@ -349,17 +406,6 @@ are heat sources at fixed temperatures.
 \end{center}
 \end{figure}
 
-
-\subsubsection{Convergence}
-This calculation of temperatures based on the previous state of the neighbouring cells takes place
-until certain convergence criteria is met. To explain this, suppose that an initial state of the 
-surface included a heat source in certain cell. The temperature of this cell will remain the same
-during the whole computation.\smallskip \\
-As one may suspect, it may come a point where all the cells surrounding the heat source will be at
-about the same temperature of the heat source, and eventually the whole surface will be at the same
-temperature of the heat source. This is what will match our physical intuition, and we will expect
-the model to behave in this way, but we are really more interested in studying how the heat flows
-in a point at time that is before that obvious limit.\\
 In order to accomplish that, we will consider that the simulation has \emph{converged} when the 
 difference between each of the $h_{ij}$ cells in two successive steps of the computation is less
 than certain value $C$ which we will choose conveniently.
@@ -578,6 +624,8 @@ this we decided to run the application in a different number of nodes.
 Hairong Kuang, Sanjay Radia, and Robert Chansler (Proceedings of MSST2010, May 2010, available at \href{http://
 storageconference.org/2010/Papers/MSST/Shvachko.pdf}{http://storageconference.org/2010/Papers/MSST/Shvachko.pdf}).
 \bibitem{ProHadoop} Pro Hadoop, Jason Venner, Apress 2009.
+\bibitem{Andrews} Foundations of Multithreaded, Parallel, and Distributed Programming, 
+Gregory R. Andrews, Addison Wesley, 2001.
 \end{thebibliography}
 	
 	

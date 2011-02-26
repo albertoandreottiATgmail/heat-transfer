@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.9 (MiKTeX 2.7) (preloaded format=latex 2010.11.15)  26 FEB 2011 12:30
+This is pdfTeX, Version 3.1415926-1.40.9 (MiKTeX 2.7) (preloaded format=latex 2010.11.15)  26 FEB 2011 15:28
 entering extended mode
 **Informe.tex
 (Informe.tex
@@ -482,72 +482,80 @@ Underfull \hbox (badness 10000) in paragraph at lines 293--295
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 293--295
-
- []
-
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <17.28> on input line 297.
 
-! LaTeX Error: There's no line here to end.
+LaTeX Warning: Reference `Andrews' on page 6 undefined on input line 307.
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.297 ...\partial^2 \Phi}{\partial^2 y} = 0$ \\ \\
-                                                  
-? 
 File: problem_desc.jpg Graphic file (type eps)
-<problem_desc.jpg> [6]
-File: problem_comp.jpg Graphic file (type eps)
- <problem_comp.jpg>
-File: problem_sample.jpg Graphic file (type eps)
- <problem_sample.jpg> [7] [8]
-File: serialization.jpg Graphic file (type eps)
+<problem_desc.jpg>
+Underfull \hbox (badness 10000) in paragraph at lines 300--322
 
-<serialization.jpg>
-File: map_fine.jpg Graphic file (type eps)
- <map_fine.jpg> [9]
-File: red_fine.jpg Graphic file (type eps)
- <red_fine.jpg>
-LaTeX Font Info:    Try loading font information for OML+ppl on input line 438.
+ []
 
+[6]
+LaTeX Font Info:    Try loading font information for OML+ppl on input line 334.
 
-("d:\Archivos de programa\MiKTeX 2.7\tex\latex\psnfss\omlppl.fd"
+ ("d:\Archivos de programa\MiKTeX 2.7\tex\latex\psnfss\omlppl.fd"
 File: omlppl.fd 
 )
 LaTeX Font Info:    Font shape `OML/ppl/m/n' in size <9> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 438.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 334.
+File: problem_comp.jpg Graphic file (type eps)
 
-Overfull \hbox (16.01315pt too wide) in paragraph at lines 473--475
+<problem_comp.jpg> [7]
+File: problem_sample.jpg Graphic file (type eps)
+ <problem_sample.jpg>
+Underfull \hbox (badness 10000) in paragraph at lines 386--407
+
+ []
+
+[8]
+Underfull \hbox (badness 10000) in paragraph at lines 432--437
+
+ []
+
+[9]
+File: serialization.jpg Graphic file (type eps)
+ <serialization.jpg>
+File: map_fine.jpg Graphic file (type eps)
+ <map_fine.jpg>
+Underfull \hbox (badness 10000) in paragraph at lines 460--472
+
+ []
+
+File: red_fine.jpg Graphic file (type eps)
+<red_fine.jpg> [10]
+Overfull \hbox (16.01315pt too wide) in paragraph at lines 526--528
 [][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (26.81326pt too wide) in paragraph at lines 484--485
+Overfull \hbox (26.81326pt too wide) in paragraph at lines 537--538
 [][][][][][][][][][][][][][][][][][][][][] 
  []
 
-[10]
+[11]
 File: map_gross.jpg Graphic file (type eps)
  <map_gross.jpg>
 File: red_gross.jpg Graphic file (type eps)
- <red_gross.jpg> [11]
+ <red_gross.jpg> [12]
 File: 2dplot.eps Graphic file (type eps)
- <2dplot.eps> [12] [13] (Informe.aux)
+ <2dplot.eps> [13] [14] (Informe.aux)
+
+LaTeX Warning: There were undefined references.
+
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 6215 strings out of 95305
- 88604 string characters out of 1182791
+ 6228 strings out of 95305
+ 88719 string characters out of 1182791
  214942 words of memory out of 1500000
- 9324 multiletter control sequences out of 110000
+ 9337 multiletter control sequences out of 110000
  17088 words of font info for 56 fonts, out of 3000000 for 5000
  14 hyphenation exceptions out of 8191
- 36i,9n,40p,896b,1299s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,9n,40p,896b,1302s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on Informe.dvi (13 pages, 67028 bytes).
+Output written on Informe.dvi (14 pages, 76068 bytes).
