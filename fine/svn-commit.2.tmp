@@ -1,7 +1,0 @@
-Removed some allocations with new() in map function.
---This line, and those below, will be ignored--
-
-M    HeatTransfer.java
-M    SequenceFileWriteDemo.java
-M    Makefile
-M    MatrixData.java
