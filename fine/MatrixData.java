@@ -7,19 +7,17 @@ package org.apache.hadoop.examples;
 
 public class MatrixData{
 
-     static private int width = 12500;
-     static private int height = 12500;
+     static private int width = 10000;
+     static private int length = 10000;
 
      //zero based 
-     static private int sourceX = 35;
-     static private int sourceY = 35;
+     static private int sourceX = 350;
+     static private int sourceY = 350;
 
      static private float temperature = 35;
 
-     static private float initialTemp = 0.0f;
-
-     public static int Height(){
-        return height;
+     public static int Length(){
+        return length;
      }
      
      public static int Width(){
@@ -27,7 +25,7 @@ public class MatrixData{
      }
      //zero based
      public static int LinearSize(){
-        return height*width-1;
+        return length*width-1;
      }
 
      public static int HeatSourceX(){
@@ -46,8 +44,5 @@ public class MatrixData{
         return temperature;
      }
 
-     public static float InitialTemp(){
-        return initialTemp;
-     }
 }
 

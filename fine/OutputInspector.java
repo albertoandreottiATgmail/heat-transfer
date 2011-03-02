@@ -27,12 +27,12 @@ public class OutputInspector {
     try {
       reader = new SequenceFile.Reader(fs, path, conf);
       Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
-      KeyArrayValue value = (KeyArrayValue)ReflectionUtils.newInstance(reader.getValueClass(), conf);
+      FloatWritable value = (FloatWritable)ReflectionUtils.newInstance(reader.getValueClass(), conf);
       long position = reader.getPosition();
       while (reader.next(key, value)) {
         String syncSeen = reader.syncSeen() ? "*" : "";
-        FloatWritable[] faw =(FloatWritable[]) value.toArray();
-        System.out.printf("[%s%s]\t%s\t%s\t%s\t%s\n", position, syncSeen, key, faw[499].get(), faw[500].get(),faw[501].get());
+        FloatWritable fw =(FloatWritable) value;
+        System.out.println(key.toString() +" "+ value.toString());
 
         position = reader.getPosition(); // beginning of next record
       }
@@ -41,5 +41,3 @@ public class OutputInspector {
     }
   }
 }
-
-
