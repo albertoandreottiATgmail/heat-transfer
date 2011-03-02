@@ -1,0 +1,10 @@
+#!/bin/bash
+hadoop fs -cp /mySeq /output/part-r-00000 
+for i in {1..50}
+do
+   make RunCycle
+done
+
+rm -f part-r-00000
+hadoop fs -copyToLocal /output/part-r-00000 .
+

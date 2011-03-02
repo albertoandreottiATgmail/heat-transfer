@@ -1,0 +1,33 @@
+#export HADOOP_HOME=/home/beto/hadoop-0.20.2
+#export HEAT_TRANSFER=/home/beto/wc_fine/HeatTransferFine
+#FIRST
+cd $HEAT_TRANSFER
+make RunCycle
+
+#SECOND
+$HADOOP_HOME/bin/stop-all.sh
+sleep 4
+sed -i".bak" '3d' $HADOOP_HOME/conf/slaves
+$HADOOP_HOME/bin/start-all.sh
+
+cd $HEAT_TRANSFER
+make RunCycle
+
+#THIRD
+$HADOOP_HOME/bin/stop-all.sh
+sleep 4
+sed -i".bak" '2d' $HADOOP_HOME/conf/slaves
+$HADOOP_HOME/bin/start-all.sh
+
+cd $HEAT_TRANSFER
+make RunCycle
+
+#FOURTH
+$HADOOP_HOME/bin/stop-all.sh
+sleep 4
+sed -i".bak" '1d' $HADOOP_HOME/conf/slaves
+$HADOOP_HOME/bin/start-all.sh
+
+cd $HEAT_TRANSFER
+make RunCycle
+
