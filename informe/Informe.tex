@@ -600,11 +600,18 @@ Reduce function for our second alternative solution of the heat transfer problem
 %GnuPlot Commands: 
 %set terminal postscript eps rounded enhanced color
 %set output '2dplot.eps'
-%set label 'n' at 10700000,1300
+%set label 'n' at 10,10
 %set grid 10000, 13000
 %show grid
-%plot  "perf.dat" using 1:2 title 'Fine' with linespoints, \
-%      "perf.dat" using 1:3 title 'Gross' with linespoints
+%plot  "perf.dat" using 1:2 title 'Fine' , \
+     "perf.dat" using 1:3 title 'Gross' 
+
+%set boxwidth 1 relative
+%set style data histograms
+%set style fill solid 1.0 border -1
+%plot 'perf.dat' using 2:xticlabels(1) title 'Fine', "perf.dat" using 3:xticlabels(1) title 'Gross'
+
+
 
 
 \section{Performance}
