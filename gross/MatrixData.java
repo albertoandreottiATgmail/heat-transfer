@@ -7,8 +7,8 @@ package org.apache.hadoop.examples;
 
 public class MatrixData{
 
-     static private int width = 12500;
-     static private int height = 12500;
+     static private int width = 8500;
+     static private int height = 8500;
 
      //zero based 
      static private int sourceX = 35;

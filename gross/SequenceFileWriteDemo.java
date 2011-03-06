@@ -23,7 +23,7 @@ public class SequenceFileWriteDemo {
   public static void main(String[] args) throws IOException {
      
      //Write file in the local dir
-     String uri = "/mySeq"; 
+     String uri = "/home/beto/mySeq"; 
 
      Configuration conf = new Configuration();
      FileSystem fs = FileSystem.get(URI.create(uri), conf);
@@ -37,9 +37,18 @@ public class SequenceFileWriteDemo {
      SequenceFile.Writer writer = null;
      try {
        writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), kav.getClass());
-      for (int i = 0; i < MatrixData.Height(); i++) {
+     int step = MatrixData.Height()/10;
+     int limit = step; 
+     
+     for (int i = 0; i < MatrixData.Height(); i++) {
         key.set(i);
         kav.setKey(i);
+        //Print progress indicator
+        if(i>limit){
+             System.out.println("*");
+             limit +=step;
+        }
+        //Handle heatsource
         if(i==MatrixData.HeatSourceY()) 
                  { kav.setHeatSource(MatrixData.HeatSourceTemperature(), MatrixData.HeatSourceX());
                    writer.append(key, kav);

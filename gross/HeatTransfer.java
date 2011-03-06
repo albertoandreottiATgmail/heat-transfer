@@ -1,7 +1,7 @@
 package org.apache.hadoop.examples;
 
 import java.util.*;
-import java.io.IOException;
+import java.io.*;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -153,6 +153,19 @@ public class HeatTransfer {
 
     long end = System.currentTimeMillis();
     System.out.println("Execution time was "+(end-start)+" ms.");
+    try{
+        // Create file
+        FileWriter fstream = new FileWriter("Times.txt",true);
+        BufferedWriter out = new BufferedWriter(fstream);
+        out.write(end-start + "ms \n");
+        //Close the output stream
+        out.close();
+    }catch (Exception e){
+        //Catch exception if any
+        System.err.println("Error: " + e.getMessage());
+        System.exit(status);
+    }
+
     System.exit(status);	
    
   }
