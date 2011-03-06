@@ -255,8 +255,9 @@ fast, but not so easy to extend or use from languages other than Java. Since Wri
 are central to Hadoop (most MapReduce programs use them for their key and value
 types), we will focus on them.\\
 \subsubsection{The Writable Interface}
-The Writable interface defines two methods: one for \emph{writing} its state to a DataOutput
-binary stream, and one for \emph{reading} its state from a DataInput binary stream:
+The Writable interface defines two methods: one for \emph{writing} the object's state
+to a DataOutput binary stream, and other for \emph{reading} its state from a DataInput
+binary stream:
 
 \begin{figure}[H]
 \begin{center}
@@ -285,8 +286,8 @@ create one and set its value using the set() method: \\
 IntWritable writable = new IntWritable();
 writable.set(163);
 \end{lstlisting}
-\caption{\label{list:red_fine}\footnotesize
-Basic usage of IntWritable.}%
+%\caption{\label{list:red_fine}\footnotesize
+%Basic usage of IntWritable.}%
 \end{center}
 \end{figure}
 Objects that implement the Writable interface can be used to form the splits provided 
