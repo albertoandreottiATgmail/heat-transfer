@@ -1,7 +1,6 @@
 package org.apache.hadoop.examples;
 
 import java.util.*;
-import java.io.IOException;
 import java.io.*;
 
 import org.apache.hadoop.conf.Configuration;
@@ -21,21 +20,21 @@ public class HeatTransfer {
     public static class TokenizerMapper
     extends Mapper<IntWritable, FloatWritable, IntWritable, FloatWritable>{
 
-    public void map(IntWritable key, FloatWritable fwValue, Context context
+    public void map(IntWritable linearPos, FloatWritable heat, Context context
                             ) throws IOException, InterruptedException {
-       int myKey = key.get();
+       int myLinearPos = linearPos.get();
        
        //Distribute my value to the previous and the next
-	   key.set(myKey - 1);
-       context.write(key, fwValue);
-       key.set(myKey + 1);
-       context.write(key, fwValue);
+       linearPos.set(myLinearPos - 1);
+       context.write(linearPos, heat);
+       linearPos.set(myLinearPos + 1);
+       context.write(linearPos, heat);
 
        //Distribute my value to the cells above and below
-       key.set(myKey - MatrixData.Length());
-       context.write(key, fwValue);
-       key.set(myKey + MatrixData.Length());
-       context.write(key, fwValue);
+       linearPos.set(myLinearPos - MatrixData.Length());
+       context.write(linearPos, heat);
+       linearPos.set(myLinearPos + MatrixData.Length());
+       context.write(linearPos, heat);
 
     }//end map
 }
