@@ -495,24 +495,24 @@ Reduce function for our first alternative solution of the heat transfer problem.
 \begin{lstlisting}
 public class HeatTransfer {
 
-    public static class HeatTransferMapper
+public static class HeatTransferMapper
     extends Mapper<IntWritable, FloatWritable, IntWritable, FloatWritable>{
 
-    public void map(IntWritable key, FloatWritable fwValue, Context context
+    public void map(IntWritable linearPos, FloatWritable heat, Context context
                             ) throws IOException, InterruptedException {
-       int myKey = key.get();
-       
+       int myLinearPos = linearPos.get();
+
        //Distribute my value to the previous and the next
-	   key.set(myKey - 1);
-       context.write(key, fwValue);
-       key.set(myKey + 1);
-       context.write(key, fwValue);
+       linearPos.set(myLinearPos - 1);
+       context.write(linearPos, heat);
+       linearPos.set(myLinearPos + 1);
+       context.write(linearPos, heat);
 
        //Distribute my value to the cells above and below
-       key.set(myKey - MatrixData.Length());
-       context.write(key, fwValue);
-       key.set(myKey + MatrixData.Length());
-       context.write(key, fwValue);
+       linearPos.set(myLinearPos - MatrixData.Length());
+       context.write(linearPos, heat);
+       linearPos.set(myLinearPos + MatrixData.Length());
+       context.write(linearPos, heat);
 
     }//end map
   }//HeatTransferMapper
@@ -526,35 +526,34 @@ the method MatrixData.Length() correspond to the length of the matrix, L.}%
 \end{figure}
 
 The MatrixData class implements a constant data manager. It is used to retrieve the 
-length, linear size, and other data related to the Matrix.
+length and linear size of the matrix. It also stores the heat source location and
+value.
 
 \begin{figure}[H]
 \begin{center}
 \begin{lstlisting}
 public class HeatTransfer {
 
-     public void reduce(IntWritable key, Iterable<FloatWritable> fwValues, 
+    public void reduce(IntWritable linearPos, Iterable<FloatWritable> heats,
                        Context context) throws IOException, InterruptedException {
 
-       float result = 0.0f;
-       
        //Handle first and last "cold" boundaries
-       if(key.get()<0 || key.get()>MatrixData.LinearSize()){
-          return;
-       }
-       
-	   //Keep the heat source
-       if(key.get()==MatrixData.HeatSourceLinearPos()){
-          context.write(key, new FloatWritable(MatrixData.HeatSourceTemperature()));
+       if(linearPos.get()<0 || linearPos.get()>MatrixData.LinearSize()){
           return;
        }
 
-       //Add all the values
-       for(FloatWritable fw : fwValues) {
-          result += fw.get();
+       if(linearPos.get()==MatrixData.HeatSourceLinearPos()){
+          context.write(linearPos, new FloatWritable(MatrixData.HeatSourceTemperature()));
+          return;
        }
-       
-      context.write(key, new FloatWritable(result/4) );
+
+       float result = 0.0f;
+       //Add all the values
+       for(FloatWritable heat : fwValues) {
+          result += heat.get();
+       }
+
+      context.write(linearPos, new FloatWritable(result/4.0) );
 
     }//end reduce
 }//end HeatTransfer
@@ -569,7 +568,8 @@ Reduce function implementing the behaviour of Figure \ref{fig:red_fine}.}%
 The next option we explore, distributes data with a coarser granularity pattern.
 Instead of distributing each individual element, the map functions will now distribute
 entire rows of the matrix. The key to be used will be the row number within the matrix.
-This map function is depicted in Figure \ref{fig:map_gross}. Similarly, the reduce function now will take three rows as input. This is shown
+This map function is depicted in Figure \ref{fig:map_gross}. Similarly, the reduce 
+function now will take three rows as input. This is shown
 in Figure \ref{fig:red_gross}. 
 
 \begin{figure}[H]
@@ -603,7 +603,7 @@ Reduce function for our second alternative solution of the heat transfer problem
 \label{sec:performance}
 Now that we have an interesting problem in place with two alternative solutions, we
 would like to explore how the framework is doing regarding scalability. For doing 
-this we decided to run the application in a different number of nodes.
+this run the application in a different number of nodes.
 
     \begin{figure}[H]
 	  %\psfrag{eq}[b]{$\displaystyle\frac{v + W}{ v + W/n}$}
@@ -621,9 +621,9 @@ this we decided to run the application in a different number of nodes.
     \end{figure}
 
 We decided to initially run our implementations with an $8500$x$8500$ matrix, the
-results are in Figure \ref{fig:perf}. There is a marked difference between both 
-implementation, being the coarse grained faster by a factor ranging from $4$
-using three node to $7$ when only one node is used.\\
+results are shown in Figure \ref{fig:perf}. There is a marked difference between both 
+implementations, being the coarse grained faster by a factor ranging from $4$
+using three nodes to $7$ when only one node is used.\\
 As it was explained in the previous sections, this is primarily due to the overload
 to spawn the map and reduce functions that takes place in the fine grained version 
 compared to the coarse grained one; it is $L$x$L$ in the first one, and $L$ in the 
