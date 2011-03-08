@@ -15,10 +15,9 @@
 \usepackage{color}
 \begin{document}
 \title{High Scalable Scientific Computing using Hadoop}
-\author{Ing. Jos\'e Pablo Alberto Andreotti, Lic. Nicol\'as Wolovick, Dr. Javier Blanco.\\
-	\texttt{beto@com}, \texttt{\{nicolasw,blanco\}@famaf.unc.edu.ar}
+\author{Ing. Jos\'e P. Alberto Andreotti, Lic. Nicol\'as Wolovick, Dr. Javier Oscar Blanco.\\
+	\texttt{albertoandreotti@gmail.com}, \texttt{\{nicolasw,blanco\}@famaf.unc.edu.ar}
 }
-%TODO:Nico, cómo meto los mails acá???
 %NW: ahi puse una forma, pero fijate en http://en.wikibooks.org/wiki/LaTeX
 \date{Fa.M.A.F., U.N.C., Diciembre de 2010.}
 \maketitle
@@ -34,9 +33,9 @@ to data mining problems, in which large amounts of data\footnote{Even reaching t
 in the form of strings are processed.\\
 
 On the other hand, scientific applications work mostly on binary data
-that is stored in structures such as arrays or matrixes. Our intention
-is to leverage Hadoop capabilities such as scalability, fault tolerance,
-and load balancing, in order to target scientific workloads.
+that is stored in linear structures such as vector and matrixes. Our intention
+is to leverage Hadoop capabilities such as scalability, and load balancing,
+in order to target scientific workloads.
 We describe our experience by discussing a specific example application
 that solves the problem of heat transfer in a squared board.\\
 \\
@@ -71,7 +70,7 @@ In a similar fashion, multiple reduce functions begin execution during the
 reduce phase. The mission of the reduce functions is to take the output of
 the map phase and write the final output to disk. An example of this model
 can be seen in Figure \ref{fig:map_red}.\\
-The input to the map functions is taken from the HDFS file system. Then
+The input to the map functions is taken from the HDFS filesystem. Then
 the output of these functions is sorted, and is provided as input to the
 reduce phase. In this example only two distinct keys are present at the
 output of the map phase, thus only two reduce functions are spawned.
@@ -96,9 +95,9 @@ is designed to store these data reliably, and to stream them to applications at 
 In this section, we will briefly explain the architecture of HDFS. The explanation will 
 reproduce some of the paragraphs found in \cite{HDFSPaper}. However, for the sake of brevity,
 much of the material found in this paper was omitted, so we encourage the reader to take
-a look at the full paper for a complete description.
+a look at the full version for a complete description.
 \smallskip\\
-HDFS stores file system metadata and application data separately. More specifically, HDFS
+HDFS stores filesystem metadata and application data separately. More specifically, HDFS
 stores metadata on a dedicated server, called the \emph{NameNode}. Application data is stored on
 other servers called \emph{DataNodes}. All servers are fully connected and communicate with each 
 other using TCP-based protocols. Reliability is achieved by replicating file contents on 
@@ -110,7 +109,7 @@ The basic architecture consists in a NameNode, DataNodes and HDFS Clients.
 The NameNode stores the HDFS namespace which is a hierarchy of files and directories.
 Files and directories are represented on the NameNode by inodes, which record attributes like 
 permissions, modification and access times, namespace and disk space quotas. The file
-content is split into large blocks (typically 128 megabytes) and each block of the file is 
+content is split into large blocks (typically 128 Megabytes) and each block of the file is 
 independently replicated at multiple DataNodes (typically three). The NameNode maintains the
 namespace tree and the mapping of file blocks to DataNodes. \\
 An HDFS client wanting to read a
@@ -139,7 +138,7 @@ The last part we will discuss is the HDFS client.
 The HDFS filesystem interface
 is accessed by user applications by means of a library. The user references files and directories
 by paths in the namespace, and can perform the typical read, write and delete operations in a way
-that is very similar to UNIX filesystems. The user generally does not need to know that file system
+that is very similar to UNIX filesystems. The user generally does not need to know that filesystem
 metadata and storage are on different servers, or that blocks have multiple replicas.\\
 \begin{figure}[H]
 \begin{center}
@@ -173,13 +172,12 @@ which was extracted from \cite{ProHadoop}.
 First, the user configures a job specifying the input and its location, and ensures the input is
 in the expected format, and then submits the job to the framework. The job is also configured
 with a map and a reduce function. The framework then decomposes this job into a set of map tasks,
-shuffles, a sort, and a set of reduce tasks. \\
+shuffles, a sort, and a set of reduce tasks, as it was depicted in \ref{fig:map_red}. \\
 After that, the framework fragments the data and distributes it among the nodes in the cluster, which 
 can in turn be provided as input to the individual distributed tasks. Each fragment of input is
 called an \emph{input split}.\\
 
 \begin{table}[ht]
-\caption{Parts of a Hadoop Job} % title of Table
 \centering 
 \begin{tabular}{l l}
 \hline \hline 
@@ -199,6 +197,7 @@ Collection of the output and storage in the configured job output& Hadoop framew
 directory, in N parts, where N is the number of reduce tasks.\\[0.65ex]
 \hline \hline 
 \end{tabular}
+\caption{Parts of a Hadoop Job} % title of Table
 \label{table:hadoop_parts}
 \end{table}
 
@@ -277,8 +276,8 @@ The Writable Interface.}%
 \end{center}
 \end{figure}
 
-As an example of a writable, we will use IntWritable, a wrapper for a Java int. We can
-create one and set its value using the set() method: \\
+As an example of a writable, we will use IntWritable, a wrapper for a Java integer scalar
+type. We can create one and set its value using the set() method: \\
 
 \begin{figure}[H]
 \begin{center}
@@ -340,7 +339,7 @@ neighbours.
 
 Now, let {\bf grid} and {\bf next} be two $(L+2)$x$(L+2)$ bidimensional matrixes. The increase in the 
 dimensions is used to include the boundary conditions. The main computational loop of the 
-Jacobi iteration is as follows,
+Jacobi iteration is in Figure \ref{list:pseudocode}.
 
 
 \begin{figure}[H]
@@ -380,7 +379,7 @@ Pseudocode for the Jacobi iteration adapted from \cite{Andrews}.}
 \end{center}
 \end{figure}
 
-maxdiff is a float used to store the maximum difference between cells during each 
+The maxdiff variable is a float used to store the maximum difference between cells during each 
 step of the computation. 
 In the above code, the computation of the maximum difference
 takes place on every iteration of the loop. However, as it will be explained in the 
@@ -418,18 +417,18 @@ Instead, we will consider that the simulation has \emph{converged} when the
 difference between each of the $h_{ij}$ cells in two successive steps of the
 computation is less than certain value $C$, which we will choose conveniently.
 
-\subsubsection{Translating into a map-reduce application}
+\subsection{Translating into a map-reduce application}
 The challenge when writing a map-reduce application is to figure out how the computation will
 be organized in a set of map and reduce tasks, and how these tasks are fed with the input data. 
-We will explore two alternative approaches to achieve this in the next section.
+We will explore two alternative approaches to achieve this in the two following subsections.
 
 
-\subsection{First Alternative}
+\subsubsection{First Alternative}
 The first option we will consider is to have a map function that distributes 
 each individual element of the matrix to all its neighbours. Thus, if after 
 the execution of all the map functions, all the
 neighbours of any element i are sent to reduce function i, the calculation
-can take place on the reduce function.\\
+of the average can take place on the reduce function.\\
 In this way, the information that is output from the map phase is \emph{four times} 
 the size of the original input information. This implies, that we will have a replication
 of data that is four times the size of the input data. Furthermore, we will have
@@ -476,7 +475,7 @@ there is the input data, in the $(key, value)$ form. In the middle, we see how e
 function receives as its input the temperature values of its neighbouring cells during the
 last step. On the right side of the figure is the output data. Each reduce function 
 contributes to a single element in the output data.\\
-The listings for the map and reduce, can be seen in Figure \ref{list:map_fine}, and Figure
+The listings for the map and reduce functions, can be seen in Figure \ref{list:map_fine}, and Figure
  \ref{list:red_fine}, respectively.\\
 
 \begin{figure}[H]
@@ -496,7 +495,7 @@ Reduce function for our first alternative solution of the heat transfer problem.
 \begin{lstlisting}
 public class HeatTransfer {
 
-    public static class TokenizerMapper
+    public static class HeatTransferMapper
     extends Mapper<IntWritable, FloatWritable, IntWritable, FloatWritable>{
 
     public void map(IntWritable key, FloatWritable fwValue, Context context
@@ -516,7 +515,7 @@ public class HeatTransfer {
        context.write(key, fwValue);
 
     }//end map
-  }//TokenizerMapper
+  }//HeatTransferMapper
 }//HeatTransfer
 
 \end{lstlisting}
@@ -525,6 +524,9 @@ Map function implementing the behaviour of Figure \ref{fig:map_fine}. In this li
 the method MatrixData.Length() correspond to the length of the matrix, L.}%
 \end{center}
 \end{figure}
+
+The MatrixData class implements a constant data manager. It is used to retrieve the 
+length, linear size, and other data related to the Matrix.
 
 \begin{figure}[H]
 \begin{center}
@@ -564,10 +566,10 @@ Reduce function implementing the behaviour of Figure \ref{fig:red_fine}.}%
 
 
 \subsection{Second Alternative}
-The next option we are exploring distributes data with a grosser granularity pattern.
+The next option we explore, distributes data with a coarser granularity pattern.
 Instead of distributing each individual element, the map functions will now distribute
 entire rows of the matrix. The key to be used will be the row number within the matrix.
-This map function is depicted in Figure \ref{fig:map_gross}.Similarly, the reduce function now will take three rows as input. This is shown
+This map function is depicted in Figure \ref{fig:map_gross}. Similarly, the reduce function now will take three rows as input. This is shown
 in Figure \ref{fig:red_gross}. 
 
 \begin{figure}[H]
@@ -604,27 +606,53 @@ would like to explore how the framework is doing regarding scalability. For doin
 this we decided to run the application in a different number of nodes.
 
     \begin{figure}[H]
-%     \psfrag{eq}[b]{$\displaystyle\frac{v + W}{ v + W/n}$}
-%     \psfrag{asym}{$S_{max} = 1 + W/v$}
-%	  \psfrag{n}[b]{$n$ {\footnotesize(n\'umero de procesadores)}}
+	  %\psfrag{eq}[b]{$\displaystyle\frac{v + W}{ v + W/n}$}
+      %\psfrag{asym}{$S_{max} = 1 + W/v$}
+	  \psfrag{n}[b]{$n$ {\footnotesize(number of processors)}}
+	  \psfrag{units}[b]{{\footnotesize Total time(seconds)}}
 	  \begin {center}
       \includegraphics{2dplot.eps}
 	  \end{center}
-	  \caption{\footnotesize
+	  \caption{\label{fig:perf}\footnotesize
        This graph depicts how both implementations perform for a fixed size problem of
-	   $N=12.000$. The applications were run in one, two, four and eights processors.
+	   $N=8500$. The application was run using one, two, and three Datanodes
+	   plus one node running the JobTracker.
       }
     \end{figure}
+
+We decided to initially run our implementations with an $8500$x$8500$ matrix, the
+results are in Figure \ref{fig:perf}. There is a marked difference between both 
+implementation, being the coarse grained faster by a factor ranging from $4$
+using three node to $7$ when only one node is used.\\
+As it was explained in the previous sections, this is primarily due to the overload
+to spawn the map and reduce functions that takes place in the fine grained version 
+compared to the coarse grained one; it is $L$x$L$ in the first one, and $L$ in the 
+second. In general, fewer map and reduce functions will result in better performance.\\
+Furthermore, the amount of data that is moved is different in both versions. For every element of the 
+matrix, \emph{four} outputs are produced in the fine grained version. On the contrary, for
+the coarse grained version, for every row, the map produces only \emph{three} output rows.
+Consequently, not only few data has to be moved, but also fewer keys have to be sorted
+in the coarse grained version.
+
+	
+\subsection{Comparison with other computing models}
+Assessing Hadoop's performance compared to other computational models such as MPI or
+OpenMP is not a trivial task. Typical implementations for this problem using MPI/ OpenMP
+do not provide Hadoop's distinctive features such as a distributed filesytem, load balancing,
+and fault tolerance.\\
+Furthermore, the execution model of Hadoop involves many phases that are form a complex
+graph of activities. Detaching the strictly computational part of the execution in order
+to provide an acceptable measure for comparison is challenging. 
 
 
 \begin{thebibliography}{2}
 \bibitem{HadoopSite} Hadoop website http://hadoop.apache.org/.
-\bibitem{HDFSPaper} The Hadoop Distributed File System, Konstantin Shvachko,
-Hairong Kuang, Sanjay Radia, and Robert Chansler (Proceedings of MSST2010, May 2010, available at \href{http://
+\bibitem{HDFSPaper} Konstantin Shvachko, Hairong Kuang, Sanjay Radia, and Robert
+ChanslerThe Hadoop Distributed filesystem, (Proceedings of MSST2010, May 2010, available at \href{http://
 storageconference.org/2010/Papers/MSST/Shvachko.pdf}{http://storageconference.org/2010/Papers/MSST/Shvachko.pdf}).
-\bibitem{ProHadoop} Pro Hadoop, Jason Venner, Apress 2009.
-\bibitem{Andrews} Foundations of Multithreaded, Parallel, and Distributed Programming, 
-Gregory R. Andrews, Addison Wesley, 2001.
+\bibitem{ProHadoop} Jason Venner, Pro Hadoop, Apress 2009.
+\bibitem{Andrews} Gregory R. Andrews, Foundations of Multithreaded, Parallel, and Distributed Programming, 
+Addison Wesley, 2001.
 \end{thebibliography}
 	
 	
