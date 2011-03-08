@@ -42,27 +42,26 @@ public class HeatTransfer {
 public static class IntSumReducer
        extends Reducer<IntWritable, FloatWritable, IntWritable, FloatWritable> {
 
-    public void reduce(IntWritable key, Iterable<FloatWritable> fwValues, 
+    public void reduce(IntWritable linearPos, Iterable<FloatWritable> heats, 
                        Context context) throws IOException, InterruptedException {
 
-       float result = 0.0f;
-       
        //Handle first and last "cold" boundaries
-       if(key.get()<0 || key.get()>MatrixData.LinearSize()){
+       if(linearPos.get()<0 || linearPos.get()>MatrixData.LinearSize()){
           return;
        }
 
-       if(key.get()==MatrixData.HeatSourceLinearPos()){
-          context.write(key, new FloatWritable(MatrixData.HeatSourceTemperature()));
+       if(linearPos.get()==MatrixData.HeatSourceLinearPos()){
+          context.write(linearPos, new FloatWritable(MatrixData.HeatSourceTemperature()));
           return;
-       }
-
-       //Add all the values
-       for(FloatWritable fw : fwValues) {
-          result += fw.get();
        }
        
-      context.write(key, new FloatWritable(result/4) );
+       float result = 0.0f;
+       //Add all the values
+       for(FloatWritable heat : fwValues) {
+          result += heat.get();
+       }
+       
+      context.write(linearPos, new FloatWritable(result/4) );
 
     }//end reduce
 }
