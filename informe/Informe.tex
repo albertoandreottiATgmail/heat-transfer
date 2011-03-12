@@ -5,6 +5,7 @@
 \usepackage[bottom]{footmisc}
 \usepackage{psfrag}
 \usepackage{listings}
+\hyphenation{DataNode NameNode filesystem}
 \lstset{
 %	backgroundcolor=\color{none},
 	basicstyle=\footnotesize,
@@ -24,7 +25,7 @@
 \begin{abstract}
 
 This work provides a description of our experience in trying to apply
-the capabilities of Hadoop\cite{HadoopSite}
+the capabilities of Hadoop~\cite{HadoopSite}
 to scientific problems. Hadoop is a
 framework intended to provide open-source software for reliable, 
 scalable, and distributed computing. It is the opensource 
@@ -42,13 +43,13 @@ that solves the problem of heat transfer in a squared board.\\
 \end{abstract}
 \section{Introduction to Hadoop}
 Hadoop is a framework intended to provide open-source software for reliable, 
-scalable, and distributed computing. Support for Reliability comes into play with
+scalable, and distributed computing. Support for \emph{reliability} comes into play with
 the use of commodity hardware where failures chances are high.
-Map-reduce is a \emph{linearly scalable} programming model that works on a distributed set of
-machines. The programmer writes two functions, a \emph{map function} and a \emph{reduce function}.
-\\
+Map-reduce is also a \emph{linearly scalable} programming model that works on a \emph{distributed} set of
+machines. The programmer writes two sequential functions, a \emph{map function} and a \emph{reduce function}.
+The framework does the rest, namely provide reliability, scalability and distribution.\\
 Furthermore, Hadoop is the opensource counterpart of Google's
-map-reduce framework. Hadoop is often applied to data mining problems, in which 
+map-reduce framework, and is often applied to data mining problems, in which 
 large amounts of data in the form of strings are processed. The most widely known
 parts of Hadoop are the map-reduce framework and
 the HDFS distributed filesystem. We will explain the concepts associated with
@@ -68,12 +69,15 @@ as input to the same map function, and the number of map functions will be
 equal to the number of unique keys in the input data.\\
 In a similar fashion, multiple reduce functions begin execution during the 
 reduce phase. The mission of the reduce functions is to take the output of
-the map phase and write the final output to disk. An example of this model
-can be seen in Figure \ref{fig:map_red}.\\
-The input to the map functions is taken from the HDFS filesystem. Then
+the map phase and write the final output to disk.\\
+An example of this model can be seen in Figure \ref{fig:map_red},
+the input to the map functions is taken from the HDFS filesystem. Then
 the output of these functions is sorted, and is provided as input to the
-reduce phase. In this example only two distinct keys are present at the
-output of the map phase, thus only two reduce functions are spawned.
+reduce phase. During the reduce phase, the spawned reduce functions take
+the sorted values, perform the computation and write the final result to the
+filesystem.\\
+In this example only two distinct keys are present at the
+end of the map phase, thus only two reduce functions are spawned.
 As we will show later, more complex computations may include a succession
 of multiple map-reduce cycles.\\
 
@@ -93,7 +97,7 @@ As we have previously discussed, Hadoop is intended to handle very large amounts
 i.e., thousands of Gigabytes. The Hadoop Distributed Filesystem (HDFS)
 is designed to store these data reliably, and to stream them to applications at high bandwidth. 
 In this section, we will briefly explain the architecture of HDFS. The explanation will 
-reproduce some of the paragraphs found in \cite{HDFSPaper}. However, for the sake of brevity,
+reproduce some of the paragraphs found in~\cite{HDFSPaper}. However, for the sake of brevity,
 much of the material found in this paper was omitted, so we encourage the reader to take
 a look at the full version for a complete description.
 \smallskip\\
@@ -149,7 +153,7 @@ clip=true,keepaspectratio=true]
 An HDFS client creates a new file by giving its path to the NameNode. For each block of the file,
 the NameNode returns a list of DataNodes to host its replicas. The client then pipelines data to 
 the chosen DataNodes, which eventually confirm the creation of the block replicas to the NameNode.
-This figure was taken from \cite{HDFSPaper}.
+This figure was taken from~\cite{HDFSPaper}.
 }
 \end{center}
 \end{figure}
@@ -167,7 +171,7 @@ client, the NameNode and the DataNodes are illustrated in Figure \ref{fig:hdfs_a
 %A job in Hadoop is the smallest unit of work that can be scheduled.
 A user provides a Job to the framework in order to execute useful work. A summary of the 
 interaction of a user defined Job and the framework is provided in Table \ref{table:hadoop_parts},
-which was extracted from \cite{ProHadoop}.
+which was extracted from~\cite{ProHadoop}.
 \smallskip \\
 First, the user configures a job specifying the input and its location, and ensures the input is
 in the expected format, and then submits the job to the framework. The job is also configured
@@ -307,9 +311,9 @@ and each cell within the mesh is assigned an initial temperature value. The obje
 to approximate the steady-state solution for points within the mesh.
 The Jacobi iteration is a common iterative method used to solve Laplace's equation. We will
 use the Jacobi iteration to solve the equation and will base our explanation and pseudocode
-on the description found in \cite{Andrews}.\\
+on the description found in~\cite{Andrews}.\\
 In Jacobi iteration the temperature of each cell at time $t+1$ is computed averaging 
-the temperature of the neighbouring cells at time $t$. 
+the temperature of the neighbouring cells(usually called \emph{stencil}) at time $t$. 
 The zoomed area of Figure \ref{fig:problem_div} explains how this division is performed, 
 and the resulting neighbours for a sample cell $h_{ij}$.
 Figure \ref{fig:problem_comp} explains how this computation takes place for a sample cell.\\
@@ -375,7 +379,7 @@ while(true) {
 }	
 \end{lstlisting}
 \caption{\label{list:pseudocode}\footnotesize
-Pseudocode for the Jacobi iteration adapted from \cite{Andrews}.}
+Pseudocode for the Jacobi iteration adapted from~\cite{Andrews}.}
 \end{center}
 \end{figure}
 
@@ -584,7 +588,8 @@ Map function for our second alternative solution of the heat transfer problem.
 \end{figure}
 
 Now every reduce function will have three rows as input, and these will be used to perform
-the computation of a whole output row. 
+the computation of a whole output row. This leads to a data replication
+that is three times the size of the input data.
 
 \begin{figure}[H]
 \begin{center}
