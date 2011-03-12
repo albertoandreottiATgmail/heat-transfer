@@ -341,6 +341,16 @@ neighbours.
 \end{center}
 \end{figure}
 
+Many variations of this problem are possible according to how we choose the boundaries 
+to behave, and the number and location of the heat sources. First, we may fix the temperature
+at the boundaries so they remain the same during the whole computation, or we may update
+their value at every step of the computation as any other cell within the mesh. Then
+we can have one or multiple heat sources within the mesh and in the boundaries.\\
+For our examples, we chose to have boundaries at a fixed temperature of 0º, and a single
+heat source.
+
+
+
 Now, let {\bf grid} and {\bf next} be two $(L+2)$x$(L+2)$ bidimensional matrixes. The increase in the 
 dimensions is used to include the boundary conditions. The main computational loop of the 
 Jacobi iteration is in Figure \ref{list:pseudocode}.
