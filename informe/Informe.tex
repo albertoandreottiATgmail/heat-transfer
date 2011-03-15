@@ -345,9 +345,9 @@ Many variations of this problem are possible according to how we choose the boun
 to behave, and the number and location of the heat sources. First, we may fix the temperature
 at the boundaries so they remain the same during the whole computation, or we may update
 their value at every step of the computation as any other cell within the mesh. Then
-we can have one or multiple heat sources within the mesh and in the boundaries.\\
+we can have one or multiple heat sources within the mesh and in the boundaries.
 For our examples, we chose to have boundaries at a fixed temperature of 0º, and a single
-heat source.
+heat source.\\
 
 
 
@@ -472,7 +472,7 @@ IntWritable and each value a FloatWritable.
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[hiresbb=false,bb= 0 0 300mm 111mm, scale=0.37, 
+\includegraphics[hiresbb=false,bb= 0 0 200mm 72mm, scale=0.67, 
 clip=true,keepaspectratio=true]
 {map_fine.jpg}
 \caption{\label{fig:map_fine}\footnotesize
@@ -582,9 +582,10 @@ Reduce function implementing the behaviour of Figure \ref{fig:red_fine}.}%
 The next option we explore, distributes data with a coarser granularity pattern.
 Instead of distributing each individual element, the map functions will now distribute
 entire rows of the matrix. The key to be used will be the row number within the matrix.
-This map function is depicted in Figure \ref{fig:map_gross}. Similarly, the reduce 
+The resulting map function is depicted in Figure \ref{fig:map_gross}. Similarly, the reduce 
 function now will take three rows as input. This is shown
-in Figure \ref{fig:red_gross}. 
+in Figure \ref{fig:red_gross}. The code for both functions is found in Figures 
+\ref{list:map_gross} and \ref{list:red_gross}.
 
 \begin{figure}[H]
 \begin{center}
@@ -597,9 +598,6 @@ Map function for our second alternative solution of the heat transfer problem.
 \end{center}
 \end{figure}
 
-Now every reduce function will have three rows as input, and these will be used to perform
-the computation of a whole output row. This leads to a data replication
-that is three times the size of the input data.
 
 \begin{figure}[H]
 \begin{center}
@@ -612,6 +610,53 @@ Reduce function for our second alternative solution of the heat transfer problem
 \end{center}
 \end{figure}
 
+\begin{figure}[H]
+\begin{center}
+\begin{lstlisting}
+  public static class HeatTransferMapper
+    extends Mapper<IntWritable, KeyArrayValue, IntWritable, KeyArrayValue>{
+
+    public void map(IntWritable key, KeyArrayValue value, Context context
+                            ) throws IOException, InterruptedException {
+          int myKey;
+          myKey = key.get();
+          value.setKey(myKey);
+          key.set(myKey-1);
+          context.write(key, value);
+          key.set(myKey);
+          context.write(key, value);
+          key.set(myKey+1);
+          context.write(key, value);
+        }
+  }
+
+
+\end{lstlisting}
+\caption{\label{list:map_gross}\footnotesize
+Map function implementing the behaviour of Figure \ref{fig:map_gross}. In this listing,
+the method MatrixData.Length() correspond to the length of the matrix, L.}%
+\end{center}
+\end{figure}
+
+This data distributins causes a substantial change when compared to the previous example.
+As explained above, now every reduce function will have three rows as input, and these 
+will be used to perform the computation of a whole output row. This leads to a data 
+replication that is only three times the size of the input data.\\
+This will result in fewer map functions with longer execution times. As we will show
+on the next section the outcome is a substantial reduction of the overall execution 
+time.\\
+
+
+\begin{figure}[H]
+\begin{center}
+\begin{lstlisting}
+
+\end{lstlisting}
+\caption{\label{list:red_gross}\footnotesize
+Map function implementing the behaviour of Figure \ref{fig:map_gross}. In this listing,
+the method MatrixData.Length() correspond to the length of the matrix, L.}%
+\end{center}
+\end{figure}
 
 
 \section{Performance}
@@ -671,11 +716,11 @@ Addison Wesley, 2001.
 \end{thebibliography}
 	
 	
-\section{Appendix A: Description of the Java code.}	
-Here are the listings of the two implementations for the example studied. 
+%\section{Appendix A: Description of the Java code.}	
+%Here are the listings of the two implementations for the example studied. 
 
-\section{Appendix B: Configuration of the Hadoop environment.}	
-Here are the listings of the two implementations for the example studied. 
+%\section{Appendix B: Configuration of the Hadoop environment.}	
+%Here are the listings of the two implementations for the example studied. 
 
 %FIGURES
 
