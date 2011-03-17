@@ -638,7 +638,7 @@ the method MatrixData.Length() correspond to the length of the matrix, L.}%
 \end{center}
 \end{figure}
 
-This data distributins causes a substantial change when compared to the previous example.
+This data distribution causes a substantial change when compared to the previous example.
 As explained above, now every reduce function will have three rows as input, and these 
 will be used to perform the computation of a whole output row. This leads to a data 
 replication that is only three times the size of the input data.\\
@@ -659,11 +659,11 @@ the method MatrixData.Length() correspond to the length of the matrix, L.}%
 \end{figure}
 
 
-\section{Performance}
+\section{Performance & Scalability}
 \label{sec:performance}
 Now that we have an interesting problem in place with two alternative solutions, we
 would like to explore how the framework is doing regarding scalability. For doing 
-this run the application in a different number of nodes.
+this, we run the application in a different number of nodes.
 
     \begin{figure}[H]
 	  %\psfrag{eq}[b]{$\displaystyle\frac{v + W}{ v + W/n}$}
@@ -684,15 +684,19 @@ We decided to initially run our implementations with an $8500$x$8500$ matrix, th
 results are shown in Figure \ref{fig:perf}. There is a marked difference between both 
 implementations, being the coarse grained faster by a factor ranging from $4$
 using three nodes to $7$ when only one node is used.\\
-As it was explained in the previous sections, this is primarily due to the overload
+As it was explained in the previous sections, this is primarily due to the overhead
 to spawn the map and reduce functions that takes place in the fine grained version 
-compared to the coarse grained one; it is $L$x$L$ in the first one, and $L$ in the 
-second. In general, fewer map and reduce functions will result in better performance.\\
-Furthermore, the amount of data that is moved is different in both versions. For every element of the 
-matrix, \emph{four} outputs are produced in the fine grained version. On the contrary, for
+compared to the coarse grained one; it is proportional to $L$x$L$ in the first one,
+and proportional to $L$ in the second one. 
+In general, fewer map and reduce functions will result in better performance.\\
+Furthermore, the amount of data that is moved arround is different in both versions. 
+For every element of the matrix, \emph{four} outputs are produced in the fine grained 
+version. On the contrary, for
 the coarse grained version, for every row, the map produces only \emph{three} output rows.
-Consequently, not only few data has to be moved, but also fewer keys have to be sorted
-in the coarse grained version.
+Consequently, not only less data has to be moved, but also fewer keys have to be sorted
+in the coarse grained version.\\
+Finally, it is noticeable from Figure \ref{fig:perf} that the coarse grained version,
+although more performant for every number 
 
 	
 \subsection{Comparison with other computing models}
@@ -700,10 +704,13 @@ Assessing Hadoop's performance compared to other computational models such as MP
 OpenMP is not a trivial task. Typical implementations for this problem using MPI/ OpenMP
 do not provide Hadoop's distinctive features such as a distributed filesytem, load balancing,
 and fault tolerance.\\
-Furthermore, the execution model of Hadoop involves many phases that are form a complex
+Furthermore, the execution model of Hadoop involves many phases that form a complex
 graph of activities. Detaching the strictly computational part of the execution in order
-to provide an acceptable measure for comparison is challenging. 
+to provide an acceptable measure for comparison is a challenging task. Thus, we won't
+provide such a comparison in this work.\\
 
+
+\subsection{Comparison with other computing models}
 
 \begin{thebibliography}{2}
 \bibitem{HadoopSite} Hadoop website http://hadoop.apache.org/.
