@@ -70,7 +70,7 @@ public class HeatTransfer {
 			FloatArray[zBasedWidth].set(tmp);
 			
 		    for(int i=1; i<(MatrixData.Width()-1);i++){
-				tmp = ((FloatWritable[])kav.toArray())[i-1] + ((FloatWritable[])kav.toArray())[i+1];
+				tmp = ((FloatWritable[])kav.toArray())[i-1].get() + ((FloatWritable[])kav.toArray())[i+1].get();
 				intermediate.set(tmp);
 				FloatArray[i] = intermediate;
 		 		}
@@ -85,7 +85,7 @@ public class HeatTransfer {
 			FloatArray[zBasedWidth].set(tmp);
 			
             for(int i=1; i<(MatrixData.Width()-1);i++){
-				tmp = (FloatWritable[])kav.toArray()[i];
+				tmp = ((FloatWritable[])kav.toArray())[i].get();
 				intermediate.set(tmp);
 				FloatArray[i] = intermediate;
 		 		}
