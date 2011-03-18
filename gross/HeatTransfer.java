@@ -66,8 +66,8 @@ public class HeatTransfer {
 			float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
 			FloatArray[0].set(tmp);
 	        
-			intermediate = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth-1]).get();
-			FloatArray[zBasedWidth].set(intermediate);
+			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth-1]).get();
+			FloatArray[zBasedWidth].set(tmp);
 			
 		    for(int i=1; i<(MatrixData.Width()-1);i++){
 				res = (FloatWritable[])kav.toArray()[i-1] + (FloatWritable[])kav.toArray()[i+1];
@@ -81,8 +81,8 @@ public class HeatTransfer {
 		    float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[0]).get();
 			FloatArray[0].set(tmp);
 	        
-			intermediate = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth]).get();
-			FloatArray[zBasedWidth].set(intermediate);
+			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth]).get();
+			FloatArray[zBasedWidth].set(tmp);
 			
             for(int i=1; i<(MatrixData.Width()-1);i++){
 				res = (FloatWritable[])kav.toArray()[i];
