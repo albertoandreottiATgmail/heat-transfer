@@ -63,8 +63,8 @@ public class HeatTransfer {
 	            
         //middle row
 		if(kav.getKey()==key.get()){
-			intermediate = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
-			FloatArray[0].set(intermediate);
+			float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
+			FloatArray[0].set(tmp);
 	        
 			intermediate = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth-1]).get();
 			FloatArray[zBasedWidth].set(intermediate);
@@ -78,8 +78,8 @@ public class HeatTransfer {
 
 		//row above and below
         if(kav.getKey()==key.get()+1 || kav.getKey()==key.get()-1) {
-		    float intermediate = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[0]).get();
-			FloatArray[0].set(intermediate);
+		    float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[0]).get();
+			FloatArray[0].set(tmp);
 	        
 			intermediate = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth]).get();
 			FloatArray[zBasedWidth].set(intermediate);
