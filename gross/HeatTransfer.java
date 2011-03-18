@@ -28,10 +28,12 @@ public class HeatTransfer {
           myKey = key.get();
           //System.out.println("Soy un map con key: " + key.toString() + " \n");
           value.setKey(myKey);
-
-          context.write(new IntWritable(myKey - 1),value);
-          context.write(new IntWritable(myKey),value);
-          context.write(new IntWritable(myKey + 1),value);
+          key.set(myKey-1);
+          context.write(key, value);
+          key.set(myKey);
+          context.write(key, value);
+          key.set(myKey+1);
+          context.write(key, value);
         }
   }
   
@@ -43,40 +45,32 @@ public class HeatTransfer {
     public void reduce(IntWritable key, Iterable<KeyArrayValue> values, 
                        Context context) throws IOException, InterruptedException {
       
-	//System.out.println("Soy un reduce con key: "+key.get()+"\n");
-
       KeyArrayValue fresult = new KeyArrayValue();
       fresult.setKey(key.get());
       FloatArrayWritable result = new FloatArrayWritable();
       FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
       FloatWritable[] current=null, next=null, previous= null;
+      FloatWritable intermediate = new FloatWritable(0);
 
-      //these keys are generated, check some way to filter them somewhere else
+      //Keys for which no output is produced
       if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
         return;
 
       //Handle first and last "cold" boundaries
-      if(key.get()==0){
+      if(key.get()==0 | key.get()==MatrixData.Height()-1){
 
            for(int i=0;i<MatrixData.Width();i++){
               FloatArray[i] = new FloatWritable(MatrixData.InitialTemp());
            }
-         
-           previous = FloatArray;
-      }
-
-      if(key.get()==MatrixData.Height()-1){
-
-           for(int i=0;i<MatrixData.Width();i++){
-              FloatArray[i] = new FloatWritable(MatrixData.InitialTemp());
-           }
-         
-           next = FloatArray;
+           
+           if(key.get()==MatrixData.Height()-1)
+              next = FloatArray;
+           else    
+              previous = FloatArray;
       }
 
      //Get the values       
      for(KeyArrayValue kav : values) {
-//           System.out.println("Inside");
         
          if(kav.getKey()==key.get())
            current = (FloatWritable[])kav.toArray();
@@ -92,28 +86,28 @@ public class HeatTransfer {
       float res;   
       //left boundary, question: divide by 2 or 4 in the boundary??
       res = previous[0].get() + current[1].get() + next[0].get();
-      FloatArray[0] = new FloatWritable(res/4);
+      intermediate.set(res/4);
+      FloatArray[0] = intermediate;
      
       //middle elements
       for(int i=1; i<(MatrixData.Width()-1);i++){
          res = previous[i].get() + current[i-1].get() + current[i+1].get() + next[i].get();
- 	 FloatArray[i] = new FloatWritable(res/4);
+ 	 intermediate.set(res/4);
+         FloatArray[i] = intermediate;
       }
 
       //right boundary, question: divide by 2 or 4 in the boundary??
       int zBasedWidth = MatrixData.Width()-1;
       res = previous[zBasedWidth].get() + current[zBasedWidth-1].get() + next[zBasedWidth].get();
       //use setters! FloatArray[999].set(res/4);		
-      FloatArray[zBasedWidth] = new FloatWritable(res/4);
+      intermediate.set(res/4);
+      FloatArray[zBasedWidth] = intermediate;
       
       //Set heat source
-
-           if(key.get()==MatrixData.HeatSourceY())
-               FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
-
+      if(key.get()==MatrixData.HeatSourceY())
+      FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
       result.set(FloatArray);
       fresult.setArray(result);
- 
       context.write(key, fresult);
 
     }
