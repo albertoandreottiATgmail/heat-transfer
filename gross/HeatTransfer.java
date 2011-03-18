@@ -63,7 +63,7 @@ public class HeatTransfer {
 	            
         //middle row
 		if(kav.getKey()==key.get()){
-			float intermediate = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
+			intermediate = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
 			FloatArray[0].set(intermediate);
 	        
 			intermediate = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth-1]).get();
@@ -99,8 +99,9 @@ public class HeatTransfer {
       
 
       //Make the division and write the result
-      for(int i=0; i<(MatrixData.Width());i++)
-			FloatArray[i] /= 4;
+      for(int i=0; i<(MatrixData.Width());i++){
+     	FloatArray[i].set( FloatArray[i].get()/4);
+	  }
 
       result.set(FloatArray);
       fresult.setArray(result);
