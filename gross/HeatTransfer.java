@@ -51,6 +51,7 @@ public class HeatTransfer {
       FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
       FloatWritable[] current=null, next=null, previous= null;
       FloatWritable intermediate = new FloatWritable(0);
+	  float res = 0;
 
       //Keys for which no output is produced
       if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
