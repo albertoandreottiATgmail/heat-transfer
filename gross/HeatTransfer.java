@@ -56,57 +56,45 @@ public class HeatTransfer {
       if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
         return;
 
-      //Handle first and last "cold" boundaries
-      if(key.get()==0 | key.get()==MatrixData.Height()-1){
-
-           for(int i=0;i<MatrixData.Width();i++){
-              FloatArray[i] = new FloatWritable(MatrixData.InitialTemp());
-           }
-           
-           if(key.get()==MatrixData.Height()-1)
-              next = FloatArray;
-           else    
-              previous = FloatArray;
-      }
-
-     //Get the values       
+     int zBasedWidth = MatrixData.Width()-1;
+	 //Get the values       
      for(KeyArrayValue kav : values) {
-        
-         if(kav.getKey()==key.get())
-           current = (FloatWritable[])kav.toArray();
+	            
+        //middle row
+		if(kav.getKey()==key.get()){
+			FloatArray[0]+= (FloatWritable[])kav.toArray()[0];
+			FloatArray[zBasedWidth]+= (FloatWritable[])kav.toArray()[zBasedWidth-1];
+		    for(int i=1; i<(MatrixData.Width()-1);i++){
+				res = (FloatWritable[])kav.toArray()[i-1] + (FloatWritable[])kav.toArray()[i+1];
+				intermediate.set(res);
+				FloatArray[i] = intermediate;
+		 		}
+			}
 
-         if(kav.getKey()==key.get()+1)
-           next = (FloatWritable[])kav.toArray();
+		//row above and below
+        if(kav.getKey()==key.get()+1 || kav.getKey()==key.get()-1) {
+		    FloatArray[0]+= (FloatWritable[])kav.toArray()[0];
+			FloatArray[zBasedWidth]+= (FloatWritable[])kav.toArray()[zBasedWidth];
+			
+            for(int i=1; i<(MatrixData.Width()-1);i++){
+				res = (FloatWritable[])kav.toArray()[i];
+				intermediate.set(res);
+				FloatArray[i] = intermediate;
+		 		}
+			}
+		}
 
-         if(kav.getKey()==key.get()-1)
-           previous = (FloatWritable[])kav.toArray();
-      }
-
-      //calculate the result
-      float res;   
-      //left boundary, question: divide by 2 or 4 in the boundary??
-      res = previous[0].get() + current[1].get() + next[0].get();
-      intermediate.set(res/4);
-      FloatArray[0] = intermediate;
-     
-      //middle elements
-      for(int i=1; i<(MatrixData.Width()-1);i++){
-         res = previous[i].get() + current[i-1].get() + current[i+1].get() + next[i].get();
- 	 intermediate.set(res/4);
-         FloatArray[i] = intermediate;
-      }
-
-      //right boundary, question: divide by 2 or 4 in the boundary??
-      int zBasedWidth = MatrixData.Width()-1;
-      res = previous[zBasedWidth].get() + current[zBasedWidth-1].get() + next[zBasedWidth].get();
-      //use setters! FloatArray[999].set(res/4);		
-      intermediate.set(res/4);
-      FloatArray[zBasedWidth] = intermediate;
-      
-      //Set heat source
+	  
+	  //Set heat source
       if(key.get()==MatrixData.HeatSourceY())
       FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
-      result.set(FloatArray);
+      
+
+      //Make the division and write the result
+      for(int i=0; i<(MatrixData.Width());i++)
+			FloatArray[i] /= 4;
+
+			result.set(FloatArray);
       fresult.setArray(result);
       context.write(key, fresult);
 
