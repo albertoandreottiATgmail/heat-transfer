@@ -650,7 +650,69 @@ time.\\
 \begin{figure}[H]
 \begin{center}
 \begin{lstlisting}
+public void reduce(IntWritable key, Iterable<KeyArrayValue> values, 
+                       Context context) throws IOException, InterruptedException {
+      
+      KeyArrayValue fresult = new KeyArrayValue();
+      fresult.setKey(key.get());
+      FloatArrayWritable result = new FloatArrayWritable();
+      FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
+      FloatWritable[] current=null, next=null, previous= null;
+      FloatWritable intermediate = new FloatWritable(0);
+	  float res = 0;
 
+      //Keys for which no output is produced
+      if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
+        return;
+
+     int zBasedWidth = MatrixData.Width()-1;
+	 //Get the values       
+     for(KeyArrayValue kav : values) {
+	            
+        //middle row
+		if(kav.getKey()==key.get()){
+			float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
+			FloatArray[0].set(tmp);
+	        
+			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth-1]).get();
+			FloatArray[zBasedWidth].set(tmp);
+			
+		    for(int i=1; i<(MatrixData.Width()-1);i++){
+				tmp = ((FloatWritable[])kav.toArray())[i-1].get() + ((FloatWritable[])kav.toArray())[i+1].get();
+				intermediate.set(tmp);
+				FloatArray[i] = intermediate;
+		 		}
+			}
+
+		//rows above and below
+        if(kav.getKey()==key.get()+1 || kav.getKey()==key.get()-1) {
+		    float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[0]).get();
+			FloatArray[0].set(tmp);
+	        
+			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth]).get();
+			FloatArray[zBasedWidth].set(tmp);
+			
+            for(int i=1; i<(MatrixData.Width()-1);i++){
+				tmp = ((FloatWritable[])kav.toArray())[i].get();
+				intermediate.set(tmp);
+				FloatArray[i] = intermediate;
+		 		}
+			}
+		}
+  
+	  //Set heat source
+      if(key.get()==MatrixData.HeatSourceY())
+      FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
+
+      //Make the division and write the result
+      for(int i=0; i<(MatrixData.Width());i++){
+     	FloatArray[i].set( FloatArray[i].get()/4);
+	  }
+      result.set(FloatArray);
+      fresult.setArray(result);
+      context.write(key, fresult);
+
+    }
 \end{lstlisting}
 \caption{\label{list:red_gross}\footnotesize
 Map function implementing the behaviour of Figure \ref{fig:map_gross}. In this listing,
@@ -659,7 +721,7 @@ the method MatrixData.Length() correspond to the length of the matrix, L.}%
 \end{figure}
 
 
-\section{Performance & Scalability}
+\section{Performance \& Scalability}
 \label{sec:performance}
 Now that we have an interesting problem in place with two alternative solutions, we
 would like to explore how the framework is doing regarding scalability. For doing 
@@ -696,7 +758,12 @@ the coarse grained version, for every row, the map produces only \emph{three} ou
 Consequently, not only less data has to be moved, but also fewer keys have to be sorted
 in the coarse grained version.\\
 Finally, it is noticeable from Figure \ref{fig:perf} that the coarse grained version,
-although more performant for every number 
+although more performant for every number of processors, does not scale linearly as
+promissed by Hadoop. This may be due to a number of factors such as the heap size
+of the JVMs, number of maps and reduces, and their excecution times, and file system block
+size, just to mention a few. An exhaustive study of how all these factors impact the 
+scalability of the computational load we are currently dealing with goes beyond the
+scope of this work.
 
 	
 \subsection{Comparison with other computing models}
@@ -709,8 +776,6 @@ graph of activities. Detaching the strictly computational part of the execution 
 to provide an acceptable measure for comparison is a challenging task. Thus, we won't
 provide such a comparison in this work.\\
 
-
-\subsection{Comparison with other computing models}
 
 \begin{thebibliography}{2}
 \bibitem{HadoopSite} Hadoop website http://hadoop.apache.org/.
