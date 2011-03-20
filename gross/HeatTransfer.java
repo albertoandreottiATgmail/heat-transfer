@@ -84,8 +84,8 @@ public class HeatTransfer {
 				tmp = (((FloatWritable[])values).get()).get(i);
 				FloatArray[i].set(tmp);
 		 		}
-			}
-		}
+	}
+		
 
 	  //Set heat source
       if(key.get()==MatrixData.HeatSourceY())
