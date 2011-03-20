@@ -1,7 +1,7 @@
 \documentclass[a4paper,11pt,english]{article}
 \usepackage{hyperref}
 \usepackage{stmaryrd,palatino,url,multicol,graphicx,float,color}
-\usepackage[margin=3cm]{geometry}
+\usepackage[margin=1.9cm]{geometry}
 \usepackage[bottom]{footmisc}
 \usepackage{psfrag}
 \usepackage{listings}
@@ -72,7 +72,7 @@ reduce phase. The mission of the reduce functions is to take the output of
 the map phase and write the final output to disk.\\
 An example of this model can be seen in Figure \ref{fig:map_red},
 the input to the map functions is taken from the HDFS filesystem. Then
-the output of these functions is sorted, and is provided as input to the
+the output of these functions is sorted, and provided as input to the
 reduce phase. During the reduce phase, the spawned reduce functions take
 the sorted values, perform the computation and write the final result to the
 filesystem.\\
@@ -98,14 +98,14 @@ i.e., thousands of Gigabytes. The Hadoop Distributed Filesystem (HDFS)
 is designed to store these data reliably, and to stream them to applications at high bandwidth. 
 In this section, we will briefly explain the architecture of HDFS. The explanation will 
 reproduce some of the paragraphs found in~\cite{HDFSPaper}. However, for the sake of brevity,
-much of the material found in this paper was omitted, so we encourage the reader to take
+much of the material found in this paper was omitted, so we encourage the interested reader to take
 a look at the full version for a complete description.
 \smallskip\\
 HDFS stores filesystem metadata and application data separately. More specifically, HDFS
 stores metadata on a dedicated server, called the \emph{NameNode}. Application data is stored on
 other servers called \emph{DataNodes}. All servers are fully connected and communicate with each 
 other using TCP-based protocols. Reliability is achieved by replicating file contents on 
-multiple DataNodes.\\
+multiple DataNodes.
 In this way, not only data reliability such as in RAID is assured, but also this strategy has
 the added advantage that data transfer bandwidth is multiplied, and there are more opportunities
 for locating computation \emph{near} the needed data. \\
@@ -176,7 +176,7 @@ which was extracted from~\cite{ProHadoop}.
 First, the user configures a job specifying the input and its location, and ensures the input is
 in the expected format, and then submits the job to the framework. The job is also configured
 with a map and a reduce function. The framework then decomposes this job into a set of map tasks,
-shuffles, a sort, and a set of reduce tasks, as it was depicted in \ref{fig:map_red}. \\
+shuffles, a sort, and a set of reduce tasks, as it was depicted in Figure \ref{fig:map_red}. \\
 After that, the framework fragments the data and distributes it among the nodes in the cluster, which 
 can in turn be provided as input to the individual distributed tasks. Each fragment of input is
 called an \emph{input split}.\\
@@ -213,7 +213,7 @@ node in the cluster.
 \item JobTracker: accepts job submissions, provides job monitoring and control, and manages
 the distribution of tasks to the TaskTracker nodes.
 \end{itemize}
-Generally, there is one JobTracker process per cluster and one or more TaskTracker processes
+Typically, there is one JobTracker process per cluster and one or more TaskTracker processes
 per node in the cluster. The framework is responsible for distributing the job among the TaskTracker
 nodes of the cluster; running the map, shuffle, sort, and reduce phases; placing the output in the
 output directory; and informing the user of the job-completion status.\\
@@ -221,7 +221,7 @@ output directory; and informing the user of the job-completion status.\\
 \subsection{The Serialization Framework}
 
 Serialization is the process of turning structured objects into a byte stream for transmission
-over a network or for writing to persistent storage. Deserialization is the reverse
+over a network, or for writing to persistent storage. Deserialization is the reverse
 process of turning a byte stream back into a series of structured objects.\smallskip \\
 Serialization appears in two quite distinct areas of distributed data processing: for
 interprocess communication and for persistent storage.
@@ -283,18 +283,19 @@ The Writable Interface.}%
 As an example of a writable, we will use IntWritable, a wrapper for a Java integer scalar
 type. We can create one and set its value using the set() method: \\
 
-\begin{figure}[H]
-\begin{center}
+%\begin{figure}[H]
+%\begin{center}
 \begin{lstlisting}
 IntWritable writable = new IntWritable();
 writable.set(163);
 \end{lstlisting}
+
 %\caption{\label{list:red_fine}\footnotesize
 %Basic usage of IntWritable.}%
-\end{center}
-\end{figure}
-Objects that implement the Writable interface can be used to form the splits provided 
-as input to the map and reduce functions.
+%\end{center}
+%\end{figure}
+Objects belonging to a class that implements the Writable interface can be used to form
+the splits provided as input to the map and reduce functions.
 \section{Heat Transfer Problem}
 \subsection{Description of the problem}
 The problem we are dealing with is a classical problem of heat transfer in
@@ -434,13 +435,15 @@ computation is less than certain value $C$, which we will choose conveniently.
 \subsection{Translating into a map-reduce application}
 The challenge when writing a map-reduce application is to figure out how the computation will
 be organized in a set of map and reduce tasks, and how these tasks are fed with the input data. 
-We will explore two alternative approaches to achieve this in the two following subsections.
-
+We will explore two alternative approaches to achieve this in the two following subsections.\\
+In our exposition we will use cold boundaries(i.e., borders at a fixed temperature of 
+0$^\circ$ Celsius), and a cell that will act as the heat source, remaining constant during the whole 
+computation.
 
 \subsubsection{First Alternative}
 The first option we will consider is to have a map function that distributes 
 each individual element of the matrix to all its neighbours. Thus, if after 
-the execution of all the map functions, all the
+the execution of all the map functions, the values of all the
 neighbours of any element i are sent to reduce function i, the calculation
 of the average can take place on the reduce function.\\
 In this way, the information that is output from the map phase is \emph{four times} 
@@ -464,7 +467,7 @@ shown in Figure \ref{fig:serialization}.\\
 clip=true,keepaspectratio=true]
 {serialization.jpg}
 \caption{\label{fig:serialization}\footnotesize
-The matrix is stored as a succession of $(key, value)$ pairs being each key an 
+The matrix is stored as a succession of $(key, value)$ pairs, being each key an 
 IntWritable and each value a FloatWritable.
 }
 \end{center}
@@ -476,7 +479,7 @@ IntWritable and each value a FloatWritable.
 clip=true,keepaspectratio=true]
 {map_fine.jpg}
 \caption{\label{fig:map_fine}\footnotesize
-Map function for our first solution of the heat transfer problem.
+Map function for our first solution to the heat transfer problem.
 }
 \end{center}
 \end{figure}
@@ -486,8 +489,8 @@ each element to all its neighbouring cells. The right part shows the output of t
 function, which is a set of $(key,value)$ pairs.\\
 The matching reduce function is in Figure \ref{fig:red_fine}. On the left,
 there is the input data, in the $(key, value)$ form. In the middle, we see how each reduce 
-function receives as its input the temperature values of its neighbouring cells during the
-last step. On the right side of the figure is the output data. Each reduce function 
+function receives as its input the temperature values of its neighbouring cells at the 
+previous step. On the right side of the figure is the output data. Each reduce function 
 contributes to a single element in the output data.\\
 The listings for the map and reduce functions, can be seen in Figure \ref{list:map_fine}, and Figure
  \ref{list:red_fine}, respectively.\\
@@ -579,7 +582,7 @@ Reduce function implementing the behaviour of Figure \ref{fig:red_fine}.}%
 
 
 \subsection{Second Alternative}
-The next option we explore, distributes data with a coarser granularity pattern.
+The next option we will explore, distributes data with a coarser granularity pattern.
 Instead of distributing each individual element, the map functions will now distribute
 entire rows of the matrix. The key to be used will be the row number within the matrix.
 The resulting map function is depicted in Figure \ref{fig:map_gross}. Similarly, the reduce 
@@ -634,7 +637,78 @@ Reduce function for our second alternative solution of the heat transfer problem
 \end{lstlisting}
 \caption{\label{list:map_gross}\footnotesize
 Map function implementing the behaviour of Figure \ref{fig:map_gross}. In this listing,
-the method MatrixData.Length() correspond to the length of the matrix, L.}%
+the method MatrixData.Length() corresponds to the length of the matrix, L.}%
+\end{center}
+\end{figure}
+
+
+
+\begin{figure}[H]
+\begin{center}
+\begin{lstlisting}
+public void reduce(IntWritable key, Iterable<KeyArrayValue> values, 
+                       Context context) throws IOException, InterruptedException {
+      
+  KeyArrayValue fresult = new KeyArrayValue();
+  fresult.setKey(key.get());
+  FloatArrayWritable result = new FloatArrayWritable();
+  FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
+  FloatWritable[] current=null, next=null, previous= null;
+  FloatWritable intermediate = new FloatWritable(0);
+  int zBasedWidth = MatrixData.Width()-1;
+	  
+  //Keys for which no output is produced
+  if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
+  return;
+
+  //Perform Calculation
+  for(KeyArrayValue kav : values) {
+	            
+  //middle row
+  if(kav.getKey()==key.get()){
+	float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
+	FloatArray[0].set(tmp);
+	tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth-1]).get();
+	FloatArray[zBasedWidth].set(tmp);
+			
+	for(int i=1; i<(MatrixData.Width()-1);i++){
+		tmp = ((FloatWritable[])kav.toArray())[i-1].get() + 
+        		((FloatWritable[])kav.toArray())[i+1].get();
+		intermediate.set(tmp);
+		FloatArray[i] = intermediate;
+		}
+	}
+
+  //rows above and below
+  if(kav.getKey()==key.get()+1 || kav.getKey()==key.get()-1) {
+	float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[0]).get();
+	FloatArray[0].set(tmp);
+	tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth]).get();
+	FloatArray[zBasedWidth].set(tmp);
+			
+    for(int i=1; i<(MatrixData.Width()-1);i++){
+		tmp = ((FloatWritable[])kav.toArray())[i].get();
+		intermediate.set(tmp);
+		FloatArray[i] = intermediate;
+		}
+	}
+  }
+  
+  //Set heat source
+  if(key.get()==MatrixData.HeatSourceY())
+  FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
+
+  //Make the division and write the result
+  for(int i=0; i<(MatrixData.Width());i++){
+  	FloatArray[i].set( FloatArray[i].get()/4);
+  }
+  result.set(FloatArray);
+  fresult.setArray(result);
+  context.write(key, fresult);
+}
+\end{lstlisting}
+\caption{\label{list:red_gross}\footnotesize
+Reduce function implementing the behaviour of Figure \ref{fig:red_gross}.}%
 \end{center}
 \end{figure}
 
@@ -647,91 +721,17 @@ on the next section the outcome is a substantial reduction of the overall execut
 time.\\
 
 
-\begin{figure}[H]
-\begin{center}
-\begin{lstlisting}
-public void reduce(IntWritable key, Iterable<KeyArrayValue> values, 
-                       Context context) throws IOException, InterruptedException {
-      
-      KeyArrayValue fresult = new KeyArrayValue();
-      fresult.setKey(key.get());
-      FloatArrayWritable result = new FloatArrayWritable();
-      FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
-      FloatWritable[] current=null, next=null, previous= null;
-      FloatWritable intermediate = new FloatWritable(0);
-	  float res = 0;
-
-      //Keys for which no output is produced
-      if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
-        return;
-
-     int zBasedWidth = MatrixData.Width()-1;
-	 //Get the values       
-     for(KeyArrayValue kav : values) {
-	            
-        //middle row
-		if(kav.getKey()==key.get()){
-			float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
-			FloatArray[0].set(tmp);
-	        
-			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth-1]).get();
-			FloatArray[zBasedWidth].set(tmp);
-			
-		    for(int i=1; i<(MatrixData.Width()-1);i++){
-				tmp = ((FloatWritable[])kav.toArray())[i-1].get() + ((FloatWritable[])kav.toArray())[i+1].get();
-				intermediate.set(tmp);
-				FloatArray[i] = intermediate;
-		 		}
-			}
-
-		//rows above and below
-        if(kav.getKey()==key.get()+1 || kav.getKey()==key.get()-1) {
-		    float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[0]).get();
-			FloatArray[0].set(tmp);
-	        
-			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth]).get();
-			FloatArray[zBasedWidth].set(tmp);
-			
-            for(int i=1; i<(MatrixData.Width()-1);i++){
-				tmp = ((FloatWritable[])kav.toArray())[i].get();
-				intermediate.set(tmp);
-				FloatArray[i] = intermediate;
-		 		}
-			}
-		}
-  
-	  //Set heat source
-      if(key.get()==MatrixData.HeatSourceY())
-      FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
-
-      //Make the division and write the result
-      for(int i=0; i<(MatrixData.Width());i++){
-     	FloatArray[i].set( FloatArray[i].get()/4);
-	  }
-      result.set(FloatArray);
-      fresult.setArray(result);
-      context.write(key, fresult);
-
-    }
-\end{lstlisting}
-\caption{\label{list:red_gross}\footnotesize
-Map function implementing the behaviour of Figure \ref{fig:map_gross}. In this listing,
-the method MatrixData.Length() correspond to the length of the matrix, L.}%
-\end{center}
-\end{figure}
-
-
 \section{Performance \& Scalability}
 \label{sec:performance}
 Now that we have an interesting problem in place with two alternative solutions, we
-would like to explore how the framework is doing regarding scalability. For doing 
-this, we run the application in a different number of nodes.
+would like to explore how the framework is doing regarding performance. For doing 
+this, we run our study case in a different number of nodes.
 
     \begin{figure}[H]
 	  %\psfrag{eq}[b]{$\displaystyle\frac{v + W}{ v + W/n}$}
       %\psfrag{asym}{$S_{max} = 1 + W/v$}
-	  \psfrag{n}[b]{$n$ {\footnotesize(number of processors)}}
-	  \psfrag{units}[b]{{\footnotesize Total time(seconds)}}
+	  %\psfrag{n}[b]{$n$ {\footnotesize(number of processors)}}
+	  %\psfrag{units}[b]{{\footnotesize Total time(seconds)}}
 	  \begin {center}
       \includegraphics{2dplot.eps}
 	  \end{center}
@@ -776,6 +776,12 @@ graph of activities. Detaching the strictly computational part of the execution 
 to provide an acceptable measure for comparison is a challenging task. Thus, we won't
 provide such a comparison in this work.\\
 
+
+\section{Acknowledgements}
+I would like to thank Gustavo Wolfmann from LIDES at National University of C\'ordoba
+for kindly providing me access to the university cluster, and for his valuable guidance
+during much of the configuration work that had to be done in order to 
+obtain the results presented in this work.
 
 \begin{thebibliography}{2}
 \bibitem{HadoopSite} Hadoop website http://hadoop.apache.org/.
