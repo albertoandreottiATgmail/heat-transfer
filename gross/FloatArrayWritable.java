@@ -12,13 +12,13 @@ public class FloatArrayWritable extends ArrayWritable
         super(FloatWritable.class, values);
     }
 	
-	public FloatArrayWritable(int length) {
-        
-		FloatWritable[] FloatArray = new FloatWritable[length];  
+    public FloatArrayWritable(int length) {
+        super(FloatWritable.class);
+	FloatWritable[] FloatArray = new FloatWritable[length];  
         for(int i = 0; i<length; i++){
             FloatArray[i] = new FloatWritable(0f);
         }
-		super(FloatWritable.class, FloatArray);
+        this.set(FloatArray);
     }
 	
     public float floatAt(int i) {

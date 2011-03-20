@@ -50,11 +50,12 @@ public class SequenceFileWriteDemo {
         }
         //Handle heatsource
         if(i==MatrixData.HeatSourceY()) 
-                 { kav.setHeatSource(MatrixData.HeatSourceTemperature(), MatrixData.HeatSourceX());
-                   writer.append(key, kav);
-                   kav.setHeatSource(MatrixData.InitialTemp(), MatrixData.HeatSourceX());
-                   continue;
-                  }
+           { 
+           faw.setHeatSource(MatrixData.HeatSourceTemperature(), MatrixData.HeatSourceX());
+           writer.append(key, faw);
+           faw.setHeatSource(MatrixData.InitialTemp(), MatrixData.HeatSourceX());
+           continue;
+           }
         writer.append(key, kav);
         
       }
