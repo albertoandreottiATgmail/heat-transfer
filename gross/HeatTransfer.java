@@ -36,7 +36,7 @@ public class HeatTransfer {
 		  key.set(myKey);
 		  float tmp1, tmp2;
 		  
-		  tmp1=value[0];
+		  tmp1=value.floatAt[0];
 		  value[0]=value[1];
 		  for(int i=1; i<zBasedWidth; i++) {
 			tmp2=value[i];

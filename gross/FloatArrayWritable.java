@@ -11,6 +11,10 @@ public class FloatArrayWritable extends ArrayWritable
     public FloatArrayWritable(LongWritable[] values) {
         super(FloatWritable.class, values);
     }
+	
+	public float floatAt(int index) {
+        return ((this.get())[i]).get();
+    }
 
     public int compareTo(Object o) {
         return 1;
