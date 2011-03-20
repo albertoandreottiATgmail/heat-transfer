@@ -20,97 +20,85 @@ import org.apache.hadoop.examples.MatrixData;
 public class HeatTransfer {
 
   public static class TokenizerMapper 
-    extends Mapper<IntWritable, KeyArrayValue, IntWritable, KeyArrayValue>{
+    extends Mapper<IntWritable, FloatArrayWritable, IntWritable, FloatArrayWritable>{
     
-    public void map(IntWritable key, KeyArrayValue value, Context context
+    public void map(IntWritable key, FloatArrayWritable value, Context context
                             ) throws IOException, InterruptedException {
-          int myKey;
-          myKey = key.get();
-          //System.out.println("Soy un map con key: " + key.toString() + " \n");
-          value.setKey(myKey);
+          
+		  int myKey = key.get();
+		  int zBasedWidth = MatrixData.Width()-1;
+
           key.set(myKey-1);
-          context.write(key, value);
-          key.set(myKey);
           context.write(key, value);
           key.set(myKey+1);
           context.write(key, value);
-        }
+		  
+		  key.set(myKey);
+		  float tmp1, tmp2;
+		  
+		  tmp1=value[0];
+		  value[0]=value[1];
+		  for(int i=1; i<zBasedWidth; i++) {
+			tmp2=value[i];
+			value[i]=tmp1+value[i+1];
+			tmp1=tmp2;
+		  }
+		  value[zBasedWidth]=tmp1;
+		  
+		  context.write(key, value);
+		}
   }
   
   public static class IntSumReducer 
-       extends Reducer<IntWritable, KeyArrayValue, IntWritable, KeyArrayValue> {
+       extends Reducer<IntWritable, FloatArrayWritable, IntWritable, FloatArrayWritable> {
 
     private IntWritable result = new IntWritable();
 
-    public void reduce(IntWritable key, Iterable<KeyArrayValue> values, 
+    public void reduce(IntWritable key, Iterable<FloatArrayWritable> values, 
                        Context context) throws IOException, InterruptedException {
       
-      KeyArrayValue fresult = new KeyArrayValue();
-      fresult.setKey(key.get());
       FloatArrayWritable result = new FloatArrayWritable();
       FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
-      FloatWritable[] current=null, next=null, previous= null;
       FloatWritable intermediate = new FloatWritable(0);
-	  float res = 0;
-	  
+	  	  
 	  for(int i=0; i<(MatrixData.Width());i++){
        FloatArray[i] = new FloatWritable(0f);
 	  }
 	  
-
       //Keys for which no output is produced
       if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
         return;
 
      int zBasedWidth = MatrixData.Width()-1;
-	 //Get the values       
-     for(KeyArrayValue kav : values) {
+	 
+	 //Add the rows
+     for(FloatArrayWritable faw : values) {
 	            
-        //middle row
-		if(kav.getKey()==key.get()){
-			float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
+		    float tmp = FloatArray[0].get() + (((FloatWritable[])values).get()).get(0);
 			FloatArray[0].set(tmp);
 	        
-			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth-1]).get();
-			FloatArray[zBasedWidth].set(tmp);
-			
-		    for(int i=1; i<(MatrixData.Width()-1);i++){
-				tmp = ((FloatWritable[])kav.toArray())[i-1].get() + ((FloatWritable[])kav.toArray())[i+1].get();
-				intermediate.set(tmp);
-				FloatArray[i] = intermediate;
-		 		}
-			}
-
-		//row above and below
-        if(kav.getKey()==key.get()+1 || kav.getKey()==key.get()-1) {
-		    float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[0]).get();
-			FloatArray[0].set(tmp);
-	        
-			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth]).get();
+			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])values).get()).get(zBasedWidth);
 			FloatArray[zBasedWidth].set(tmp);
 			
             for(int i=1; i<(MatrixData.Width()-1);i++){
-				tmp = ((FloatWritable[])kav.toArray())[i].get();
-				intermediate.set(tmp);
-				FloatArray[i] = intermediate;
+				tmp = (((FloatWritable[])values).get()).get(i);
+				FloatArray[i].set(tmp);
 		 		}
 			}
 		}
 
-	  
 	  //Set heat source
       if(key.get()==MatrixData.HeatSourceY())
       FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
       
-
       //Make the division and write the result
       for(int i=0; i<(MatrixData.Width());i++){
      	FloatArray[i].set( FloatArray[i].get()/4);
 	  }
 
       result.set(FloatArray);
-      fresult.setArray(result);
-      context.write(key, fresult);
+      //fresult.setArray(result);
+      context.write(key, result);
 
     }
   }
