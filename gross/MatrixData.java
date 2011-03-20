@@ -4,11 +4,12 @@ Constant Data Manager for the matrix metadata such as size, number of elements, 
 */
 
 package org.apache.hadoop.examples;
+import java.util.Random;
 
 public class MatrixData{
 
-     static private int width = 8500;
-     static private int height = 8500;
+     static private int width =1085;
+     static private int height = 1085;
 
      //zero based 
      static private int sourceX = 35;
@@ -17,6 +18,8 @@ public class MatrixData{
      static private float temperature = 35;
 
      static private float initialTemp = 0.0f;
+
+     static Random generator = new Random(21292389);
 
      public static int Height(){
         return height;
@@ -47,7 +50,8 @@ public class MatrixData{
      }
 
      public static float InitialTemp(){
-        return initialTemp;
+        //return initialTemp;
+        return (float)generator.nextDouble();
      }
 }
 

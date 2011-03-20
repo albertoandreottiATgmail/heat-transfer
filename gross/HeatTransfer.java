@@ -36,14 +36,14 @@ public class HeatTransfer {
 		  key.set(myKey);
 		  float tmp1, tmp2;
 		  
-		  tmp1=value.floatAt[0];
-		  value[0]=value[1];
+		  tmp1=value.floatAt(0);
+		  value.set(0, value.floatAt(1));
 		  for(int i=1; i<zBasedWidth; i++) {
-			tmp2=value[i];
-			value[i]=tmp1+value[i+1];
+			tmp2=value.floatAt(i);
+			value.set(i, tmp1+value.floatAt(i+1));
 			tmp1=tmp2;
 		  }
-		  value[zBasedWidth]=tmp1;
+		  value.set(zBasedWidth,tmp1);
 		  
 		  context.write(key, value);
 		}
@@ -74,14 +74,14 @@ public class HeatTransfer {
 	 //Add the rows
      for(FloatArrayWritable faw : values) {
 	            
-		    float tmp = FloatArray[0].get() + (((FloatWritable[])values).get()).get(0);
-			FloatArray[0].set(tmp);
-	        
-			tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])values).get()).get(zBasedWidth);
-			FloatArray[zBasedWidth].set(tmp);
+          float tmp = FloatArray[0].get() + faw.floatAt(0);
+	  FloatArray[0].set(tmp);
+	       
+	  tmp = FloatArray[zBasedWidth].get() + faw.floatAt(zBasedWidth);
+	  FloatArray[zBasedWidth].set(tmp);
 			
-            for(int i=1; i<(MatrixData.Width()-1);i++){
-				tmp = (((FloatWritable[])values).get()).get(i);
+          for(int i=1; i<(MatrixData.Width()-1);i++){
+				tmp = faw.floatAt(i);
 				FloatArray[i].set(tmp);
 		 		}
 	}

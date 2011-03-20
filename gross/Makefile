@@ -33,10 +33,11 @@ RunCycle:
 	hadoop jar heattransfer.jar org.apache.hadoop.examples.HeatTransfer /home/beto/mySeq /home/beto/output
 
 clean:
-	-hadoop fs -rmr /output
-	-hadoop fs -rmr /mySeq
+	-hadoop fs -rmr /home/beto/output
+	-hadoop fs -rmr /home/beto/mySeq
 
-SequenceFileWriteDemo: KeyArrayValue MatrixData clean
+SequenceFileWriteDemo: KeyArrayValue MatrixData clean SequenceFileWriteDemo.java
+	hadoop dfsadmin -safemode leave
 	javac -classpath ${HADOOP_HOME}/hadoop-0.20.2-core.jar:${HADOOP_HOME}/lib/commons-cli-1.2.jar:${WC_CLASSES} -d ${WC_CLASSES} SequenceFileWriteDemo.java
 	jar -cvf SequenceFileWriteDemo.jar -C ${WC_CLASSES}/ .
 	hadoop jar SequenceFileWriteDemo.jar org.apache.hadoop.examples.SequenceFileWriteDemo 
