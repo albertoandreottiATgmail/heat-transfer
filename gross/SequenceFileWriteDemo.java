@@ -1,7 +1,7 @@
 package org.apache.hadoop.examples;
 
 import java.io.*;
-import org.apache.hadoop.examples.KeyArrayValue;
+import org.apache.hadoop.examples.FloatArrayWritable;
 import java.util.StringTokenizer;
 import java.net.URI;
 
@@ -32,17 +32,17 @@ public class SequenceFileWriteDemo {
      IntWritable key = new IntWritable();
 
      //(key, default_value, size)
-     KeyArrayValue kav = new KeyArrayValue(0, MatrixData.InitialTemp(), MatrixData.Width());
+     FloatArrayWritable faw = new FloatArrayWritable();
 
      SequenceFile.Writer writer = null;
      try {
-       writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), kav.getClass());
+     writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), faw.getClass());
      int step = MatrixData.Height()/10;
      int limit = step; 
      
      for (int i = 0; i < MatrixData.Height(); i++) {
         key.set(i);
-        kav.setKey(i);
+        //kav.setKey(i);
         //Print progress indicator
         if(i>limit){
              System.out.println("*");
