@@ -88,9 +88,9 @@ public class HeatTransfer {
 		
 
 	  //Set heat source
-      if(key.get()==MatrixData.HeatSourceY())
+      if(key.get()==MatrixData.HeatSourceY()){
       FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
-      
+      }
       //Make the division and write the result
       for(int i=0; i<(MatrixData.Width());i++){
      	FloatArray[i].set( FloatArray[i].get()/4);
