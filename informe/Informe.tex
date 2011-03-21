@@ -653,7 +653,6 @@ public void reduce(IntWritable key, Iterable<KeyArrayValue> values,
   fresult.setKey(key.get());
   FloatArrayWritable result = new FloatArrayWritable();
   FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
-  FloatWritable[] current=null, next=null, previous= null;
   FloatWritable intermediate = new FloatWritable(0);
   int zBasedWidth = MatrixData.Width()-1;
 	  
