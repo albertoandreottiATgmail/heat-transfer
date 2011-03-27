@@ -13,8 +13,8 @@ public class FloatArrayWritable extends ArrayWritable
     }
 	
     public FloatArrayWritable(int length) {
-        this.len=length;
         super(FloatWritable.class);
+        this.len=length;
 	FloatWritable[] FloatArray = new FloatWritable[length];  
         for(int i = 0; i<length; i++){
             FloatArray[i] = new FloatWritable(0f);
@@ -32,7 +32,8 @@ public class FloatArrayWritable extends ArrayWritable
     public void setHeatSource(float heat, int pos){
 
         //TODO:check pos
-        for(int i = 0; i<length; i++){
+        FloatWritable[] FloatArray = new FloatWritable[len]; 
+        for(int i = 0; i<len; i++){
             FloatArray[i] = new FloatWritable(0f);
         }
         if(pos>len) return;

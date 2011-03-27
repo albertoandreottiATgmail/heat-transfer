@@ -32,7 +32,7 @@ public class SequenceFileWriteDemo {
      IntWritable key = new IntWritable();
 
      //(key, default_value, size)
-     FloatArrayWritable faw = new FloatArrayWritable();
+     FloatArrayWritable faw = new FloatArrayWritable(MatrixData.Height());
 
      SequenceFile.Writer writer = null;
      try {
@@ -42,7 +42,6 @@ public class SequenceFileWriteDemo {
      
      for (int i = 0; i < MatrixData.Height(); i++) {
         key.set(i);
-        //kav.setKey(i);
         //Print progress indicator
         if(i>limit){
              System.out.println("*");
@@ -56,7 +55,7 @@ public class SequenceFileWriteDemo {
            faw.setHeatSource(MatrixData.InitialTemp(), MatrixData.HeatSourceX());
            continue;
            }
-        writer.append(key, kav);
+        writer.append(key,faw );
         
       }
     } finally {
