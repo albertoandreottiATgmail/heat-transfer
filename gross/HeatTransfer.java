@@ -13,7 +13,6 @@ import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-import org.apache.hadoop.examples.KeyArrayValue;
 import org.apache.hadoop.examples.MatrixData;
 
 
@@ -33,20 +32,20 @@ public class HeatTransfer {
           key.set(myKey+1);
           context.write(key, value);
 		  
-		  key.set(myKey);
-		  float tmp1, tmp2;
+	  key.set(myKey);
+	  float tmp1, tmp2;
+	  
+	  tmp1=value.floatAt(0);
+	  value.set(0, value.floatAt(1));
+	  for(int i=1; i<zBasedWidth; i++) {
+		tmp2=value.floatAt(i);
+		value.set(i, tmp1+value.floatAt(i+1));
+		tmp1=tmp2;
+	  }
+	  value.set(zBasedWidth,tmp1);
 		  
-		  tmp1=value.floatAt(0);
-		  value.set(0, value.floatAt(1));
-		  for(int i=1; i<zBasedWidth; i++) {
-			tmp2=value.floatAt(i);
-			value.set(i, tmp1+value.floatAt(i+1));
-			tmp1=tmp2;
-		  }
-		  value.set(zBasedWidth,tmp1);
-		  
-		  context.write(key, value);
-		}
+	  context.write(key, value);
+	}
   }
   
   public static class IntSumReducer 
@@ -87,7 +86,7 @@ public class HeatTransfer {
 	}
 		
 
-	  //Set heat source
+      //Set heat source
       if(key.get()==MatrixData.HeatSourceY()){
       FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
       }
@@ -121,12 +120,12 @@ public class HeatTransfer {
     //set job's input format
     job.setInputFormatClass(SequenceFileInputFormat.class);
     //map output/reduce input
-    job.setMapOutputValueClass(KeyArrayValue.class);    
+    job.setMapOutputValueClass(FloatArrayWritable.class);    
     job.setMapOutputKeyClass(IntWritable.class);    
 
     //reduce output
     job.setOutputKeyClass(IntWritable.class);
-    job.setOutputValueClass(KeyArrayValue.class);
+    job.setOutputValueClass(FloatArrayWritable.class);
     SequenceFileInputFormat.addInputPath(job, new Path(otherArgs[0]));
     FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
 
