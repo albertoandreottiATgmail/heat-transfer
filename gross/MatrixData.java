@@ -8,8 +8,8 @@ import java.util.Random;
 
 public class MatrixData{
 
-     static private int width =18500;
-     static private int height = 18500;
+     static private int width =8500;
+     static private int height = 8500;
 
      //zero based 
      static private int sourceX = 35;
