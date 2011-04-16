@@ -23,6 +23,7 @@ public class FloatArrayWritable extends ArrayWritable
     }
 	
     public float floatAt(int i) {
+
         return ((FloatWritable)(this.get())[i]).get();
     }
     
