@@ -56,8 +56,7 @@ public class SequenceFileWriteDemo {
            continue;
            }
         writer.append(key, faw);
-
-           
+  
       }
     } finally {
       IOUtils.closeStream(writer);
