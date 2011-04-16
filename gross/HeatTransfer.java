@@ -59,10 +59,10 @@ public class HeatTransfer {
       FloatArrayWritable result = new FloatArrayWritable();
       FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
       	  	  
-	  //Initialize the result
-	  for(int i=0; i<(MatrixData.Width());i++){
+      //Initialize the result
+      for(int i=0; i<(MatrixData.Width());i++){
          FloatArray[i] = new FloatWritable(0f);
-	  }
+      }
 	  
       //Keys for which no output is produced
       if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
@@ -70,28 +70,29 @@ public class HeatTransfer {
 
       int zBasedWidth = MatrixData.Width()-1;
 	 
-	  //Add the rows
+      //Add the rows
       for(FloatArrayWritable faw : values) {
-         float tmp = FloatArray[0].get() + faw.floatAt(0);
-	     FloatArray[0].set(tmp);
+          float tmp = FloatArray[0].get() + faw.floatAt(0);
+	  FloatArray[0].set(tmp);
 
-	     tmp = FloatArray[zBasedWidth].get() + faw.floatAt(zBasedWidth);
-	     FloatArray[zBasedWidth].set(tmp);
+	  tmp = FloatArray[zBasedWidth].get() + faw.floatAt(zBasedWidth);
+	  FloatArray[zBasedWidth].set(tmp);
 			
-          for(int i=1; i<(MatrixData.Width()-1);i++){
-				tmp = faw.floatAt(i);
-				FloatArray[i].set(tmp);
-		 		}
+          for(int i=1; i<zBasedWidth;i++){
+		tmp = FloatArray[i].get() + faw.floatAt(i);
+		FloatArray[i].set(tmp);
+		}
+	  }
+
+      //Make the division and write the result
+      for(int i=0; i<(MatrixData.Width());i++){
+     	  FloatArray[i].set( FloatArray[i].get()/4);
 	  }
 
       //Set heat source
       if(key.get()==MatrixData.HeatSourceY()){
-      FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
+          FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
       }
-      //Make the division and write the result
-      for(int i=0; i<(MatrixData.Width());i++){
-     	FloatArray[i].set( FloatArray[i].get()/4);
-	  }
 
       result.set(FloatArray);
       context.write(key, result);
