@@ -55,13 +55,20 @@ public class SequenceFileWriteDemo {
            faw.setHeatSource(MatrixData.InitialTemp(), MatrixData.HeatSourceX());
            continue;
            }
-        writer.append(key,faw );
-        
+        writer.append(key, faw);
+
+           
       }
     } finally {
       IOUtils.closeStream(writer);
     }
   }
 }
-
-
+/*
+        for (int j = 0; j < MatrixData.Height(); j++) {
+              if(faw.floatAt(j)!=0f){System.out.println("Error");}
+              else{
+              System.out.println("key:" + key.get() + " ok");
+              }
+        }
+*/
