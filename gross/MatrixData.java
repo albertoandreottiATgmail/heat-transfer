@@ -8,8 +8,8 @@ import java.util.Random;
 
 public class MatrixData{
 
-     static private int width =8500;
-     static private int height = 8500;
+     static private int width =200;
+     static private int height = 200;
 
      //zero based 
      static private int sourceX = 35;
@@ -17,7 +17,7 @@ public class MatrixData{
 
      static private float temperature = 35;
 
-     static private float initialTemp = 0.0f;
+     static private float initialTemp = 0f;
 
      static Random generator = new Random(21292389);
 
@@ -50,8 +50,8 @@ public class MatrixData{
      }
 
      public static float InitialTemp(){
-        //return initialTemp;
-        return (float)generator.nextDouble();
+        return initialTemp;
+        //return (float)generator.nextDouble();
      }
 }
 
