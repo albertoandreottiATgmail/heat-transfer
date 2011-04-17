@@ -71,7 +71,7 @@ In a similar fashion, multiple reduce functions begin execution during the
 reduce phase. The mission of the reduce functions is to take the output of
 the map phase and write the final output to disk.\\
 An example of this model can be seen in Figure \ref{fig:map_red},
-the input to the map functions is taken from the HDFS filesystem. Then
+the input of the map functions is taken from the HDFS filesystem. Then
 the output of these functions is sorted, and provided as input to the
 reduce phase. During the reduce phase, the spawned reduce functions take
 the sorted values, perform the computation and write the final result to the
@@ -98,7 +98,7 @@ i.e., thousands of Gigabytes. The Hadoop Distributed Filesystem (HDFS)
 is designed to store these data reliably, and to stream them to applications at high bandwidth. 
 In this section, we will briefly explain the architecture of HDFS. The explanation will 
 reproduce some of the paragraphs found in~\cite{HDFSPaper}. However, for the sake of brevity,
-much of the material found in this paper was omitted, so we encourage the interested reader to take
+much of the material found in that paper was omitted, so we encourage the interested reader to take
 a look at the full version for a complete description.
 \smallskip\\
 HDFS stores filesystem metadata and application data separately. More specifically, HDFS
@@ -127,8 +127,8 @@ system. The first file contains the data itself and the second file is block's m
 checksums for the block data and the block’s generation stamp. During startup each DataNode 
 connects to the NameNode and performs a handshake. The purpose of the handshake is to
 verify the \emph{namespace id} and the software version of the DataNode. If either does not match
-that of the NameNode, the DataNode automatically shuts down. The namespace id identifies all
-the nodes that belong to the filesystem instance. The consistency of software versions is 
+that of the NameNode, the DataNode automatically shuts down. The namespace id is used to identify
+all the nodes that belong to the filesystem instance. The consistency of software versions is 
 important because incompatible version may cause data corruption or loss.\\
 After the handshake, the DataNode registers with the NameNode. DataNodes persistently store
 their unique storage ids. The storage id is an internal identifier of the DataNode,
@@ -314,7 +314,7 @@ The Jacobi iteration is a common iterative method used to solve Laplace's equati
 use the Jacobi iteration to solve the equation and will base our explanation and pseudocode
 on the description found in~\cite{Andrews}.\\
 In Jacobi iteration the temperature of each cell at time $t+1$ is computed averaging 
-the temperature of the neighbouring cells(usually called \emph{stencil}) at time $t$. 
+the temperature of the neighbouring cells (usually called \emph{stencil}) at time $t$. 
 The zoomed area of Figure \ref{fig:problem_div} explains how this division is performed, 
 and the resulting neighbours for a sample cell $h_{ij}$.
 Figure \ref{fig:problem_comp} explains how this computation takes place for a sample cell.\\
@@ -352,7 +352,7 @@ heat source.\\
 
 
 
-Now, let {\bf grid} and {\bf next} be two $(L+2)$x$(L+2)$ bidimensional matrixes. The increase in the 
+Now, let {\bf grid} and {\bf next} be two $(L+2)\times(L+2)$ bidimensional matrixes. The increase in the 
 dimensions is used to include the boundary conditions. The main computational loop of the 
 Jacobi iteration is in Figure \ref{list:pseudocode}.
 
@@ -436,7 +436,7 @@ computation is less than certain value $C$, which we will choose conveniently.
 The challenge when writing a map-reduce application is to figure out how the computation will
 be organized in a set of map and reduce tasks, and how these tasks are fed with the input data. 
 We will explore two alternative approaches to achieve this in the two following subsections.\\
-In our exposition we will use cold boundaries(i.e., borders at a fixed temperature of 
+In our exposition we will use cold boundaries (i.e., borders at a fixed temperature of 
 0$^\circ$ Celsius), and a cell that will act as the heat source, remaining constant during the whole 
 computation.
 
@@ -616,22 +616,32 @@ Reduce function for our second alternative solution of the heat transfer problem
 \begin{figure}[H]
 \begin{center}
 \begin{lstlisting}
-  public static class HeatTransferMapper
-    extends Mapper<IntWritable, KeyArrayValue, IntWritable, KeyArrayValue>{
-
-    public void map(IntWritable key, KeyArrayValue value, Context context
+    
+	public void map(IntWritable key, FloatArrayWritable value, Context context
                             ) throws IOException, InterruptedException {
-          int myKey;
-          myKey = key.get();
-          value.setKey(myKey);
+          
+		  int myKey = key.get();
+		  int zBasedWidth = MatrixData.Width()-1;
+
           key.set(myKey-1);
-          context.write(key, value);
-          key.set(myKey);
           context.write(key, value);
           key.set(myKey+1);
           context.write(key, value);
-        }
-  }
+		  
+	  key.set(myKey);
+	  float tmp1, tmp2;
+	  
+	  tmp1=value.floatAt(0);
+	  value.set(0, value.floatAt(1));
+	  for(int i=1; i<zBasedWidth; i++) {
+		tmp2=value.floatAt(i);
+		value.set(i, tmp1+value.floatAt(i+1));
+		tmp1=tmp2;
+	  }
+	  value.set(zBasedWidth,tmp1);
+		  
+	  context.write(key, value);
+	}
 
 
 \end{lstlisting}
@@ -646,65 +656,52 @@ the method MatrixData.Length() corresponds to the length of the matrix, L.}%
 \begin{figure}[H]
 \begin{center}
 \begin{lstlisting}
-public void reduce(IntWritable key, Iterable<KeyArrayValue> values, 
+    public void reduce(IntWritable key, Iterable<FloatArrayWritable> values, 
                        Context context) throws IOException, InterruptedException {
       
-  KeyArrayValue fresult = new KeyArrayValue();
-  fresult.setKey(key.get());
-  FloatArrayWritable result = new FloatArrayWritable();
-  FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
-  FloatWritable intermediate = new FloatWritable(0);
-  int zBasedWidth = MatrixData.Width()-1;
+      FloatArrayWritable result = new FloatArrayWritable();
+      FloatWritable[] FloatArray = new FloatWritable[MatrixData.Width()];  
+      	  	  
+      //Initialize the result
+      for(int i=0; i<(MatrixData.Width());i++){
+         FloatArray[i] = new FloatWritable(0f);
+      }
 	  
-  //Keys for which no output is produced
-  if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
-  return;
+      //Keys for which no output is produced
+      if(key.get()<0||key.get()>(MatrixData.Height()-1)) 
+        return;
 
-  //Perform Calculation
-  for(KeyArrayValue kav : values) {
-	            
-  //middle row
-  if(kav.getKey()==key.get()){
-	float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[1]).get();
-	FloatArray[0].set(tmp);
-	tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth-1]).get();
-	FloatArray[zBasedWidth].set(tmp);
+      int zBasedWidth = MatrixData.Width()-1;
+	 
+      //Add the rows
+      for(FloatArrayWritable faw : values) {
+          float tmp = FloatArray[0].get() + faw.floatAt(0);
+	  FloatArray[0].set(tmp);
+
+	  tmp = FloatArray[zBasedWidth].get() + faw.floatAt(zBasedWidth);
+	  FloatArray[zBasedWidth].set(tmp);
 			
-	for(int i=1; i<(MatrixData.Width()-1);i++){
-		tmp = ((FloatWritable[])kav.toArray())[i-1].get() + 
-        		((FloatWritable[])kav.toArray())[i+1].get();
-		intermediate.set(tmp);
-		FloatArray[i] = intermediate;
+          for(int i=1; i<zBasedWidth;i++){
+		tmp = FloatArray[i].get() + faw.floatAt(i);
+		FloatArray[i].set(tmp);
 		}
-	}
+	  }
 
-  //rows above and below
-  if(kav.getKey()==key.get()+1 || kav.getKey()==key.get()-1) {
-	float tmp = FloatArray[0].get() + (((FloatWritable[])kav.toArray())[0]).get();
-	FloatArray[0].set(tmp);
-	tmp = FloatArray[zBasedWidth].get() + (((FloatWritable[])kav.toArray())[zBasedWidth]).get();
-	FloatArray[zBasedWidth].set(tmp);
-			
-    for(int i=1; i<(MatrixData.Width()-1);i++){
-		tmp = ((FloatWritable[])kav.toArray())[i].get();
-		intermediate.set(tmp);
-		FloatArray[i] = intermediate;
-		}
-	}
-  }
-  
-  //Set heat source
-  if(key.get()==MatrixData.HeatSourceY())
-  FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
+      //Make the division and write the result
+      for(int i=0; i<(MatrixData.Width());i++){
+     	  FloatArray[i].set( FloatArray[i].get()/4);
+	  }
 
-  //Make the division and write the result
-  for(int i=0; i<(MatrixData.Width());i++){
-  	FloatArray[i].set( FloatArray[i].get()/4);
-  }
-  result.set(FloatArray);
-  fresult.setArray(result);
-  context.write(key, fresult);
-}
+      //Set heat source
+      if(key.get()==MatrixData.HeatSourceY()){
+          FloatArray[MatrixData.HeatSourceX()].set(MatrixData.HeatSourceTemperature());
+      }
+
+      result.set(FloatArray);
+      context.write(key, result);
+
+    }
+
 \end{lstlisting}
 \caption{\label{list:red_gross}\footnotesize
 Reduce function implementing the behaviour of Figure \ref{fig:red_gross}.}%
@@ -778,7 +775,7 @@ provide such a comparison in this work.\\
 
 \section{Acknowledgements}
 I would like to thank Gustavo Wolfmann from LIDES at National University of C\'ordoba
-for kindly providing me access to the university cluster, and for his valuable guidance
+for kindly providing me access to the University cluster, and for his valuable guidance
 during much of the configuration that had to be done in order to 
 obtain the results presented in this work.
 
