@@ -1,0 +1,186 @@
+%\documentstyle{article}
+\documentclass[a4paper,11pt,english]{article}
+\usepackage{ifsym}
+\usepackage[dvipdfm, hypertex]{hyperref}
+\oddsidemargin=.15in
+\evensidemargin=.15in
+\textwidth=6in
+\topmargin=-.5in
+\textheight=9in
+\parindent=0in
+\pagestyle{empty}
+%Conditional compilation statement for professional version.
+\usepackage{ifthen}
+\newboolean{DEBUG}
+\setboolean{DEBUG}{true}
+
+\begin{document}
+
+\begin{center}
+{\Large Jose Pablo Alberto Andreotti} \\[.5pc]
+(54) 351-4730292 $\;$ albertoandreotti\verb|@|gmail.com $\;$ (54) 351-156526363 \\[3pc]
+\end{center}
+{\large \bf Informaci\'on Personal } \\*[-.8pc]
+\underline{\hspace{6in}} \\
+\\
+{\bf Nacido en Santa Cruz, Argentina}, 08/10/1982.\\
+\\
+{\bf Nationalidad}, Argentina/Italiana.\\
+\\
+{\bf Direcci\'on}, Emilio Castelar 552, C\'ordoba. Argentina.\\
+
+{\large \bf Educaci\'on} \\*[-.8pc]
+\underline{\hspace{6in}} \\
+\\
+{\bf Especialista en Sistemas y Servicios Distribuidos}\\
+\href{http://www.famaf.unc.edu.ar/}{Famaf}, Universidad de C\'ordoba, 2011. \\
+Promedio: 9.22/10. \\
+\\
+{\bf Ingeniero en Computaci\'on}\\
+Facultad de Ciencias Exactas F\'isicas y Naturales, Universidad de C\'ordoba, 2007.\\
+Tesis: Construcci\'on de una JVM dual core para sistemas embebidos de tiempo real.\\
+Promedio: 8.14/10. \\
+\\
+{\bf Secundario, Colegio Coraz\'on de Mar\'ia}\\
+Bachiller Comercial, 2000.\\
+Promedio: 8.22/10.\\
+\\
+{\bf Tesis} \\
+\href{http://www.jopdesign.com}{JOP}(Java Optimizad Processor) es una implementaci\'on hardware de la JVM.
+Mi tesis comprende el dise\~{n}o y la implementaci\'on de una JVM multiprocesador utilizando JOP.\\
+
+\ifthenelse {\boolean{DEBUG}}
+{
+{\large \bf Experiencia en Programaci\'on} \\*[-.8pc]
+\underline{\hspace{6in}} \\
+$\triangleright$ Desarrollo de Software embebido en C/C++, and Java.\\
+$\triangleright$ Mantenimiento de Software Linux en C/C++.\\
+$\triangleright$ Experiencia en plataformas m\'oviles como Android e iOS.\\
+$\triangleright$ Test Development en Bash/Perl/Python/Java.\\
+$\triangleright$ Experiencia en desarrollo orientado a objetos.\\
+\\
+}
+
+ \\
+{\large \bf Cursos de Postgrado}\\ *[-.8pc]
+\underline{\hspace{6in}} 
+$\triangleright$ High Performance Computing: Models, Methods and Means\footnote{Curso no estructurado de postgrado
+, Fa.M.A.F. Sincronizado con el Prof. Thomas Sterling.
+\href{http://www.cct.lsu.edu/csc7600/Home.html}{CSC7600}.}, primer semestre 2010.\\
+$\triangleright$ La Web sem\'antica, Doctor Jorge Cardoso, SAP Research Alemania, primer semestre de 2009.\\
+$\triangleright$ Introducci\'on al procesamiento de la senal radar, Msc Oscar Bria, 
+\href{http://www.invap.net/index-e.php}{INVAP}, segundo semestre de 2009. \href{http://postgrado.info.unlp.edu.ar/Carrera/Programas/Contenidos_IPSR.pdf}{Programa}.\\
+$\triangleright$ Performance and Scaling in E-Commerce Systems WS, Alex Buchmann, segundo semestre de 2008. 
+\href{http://www.dvs.tu-darmstadt.de/teaching/perf/2008/}{Programa}.\\
+
+
+{\large \bf Experiencia Profesional }\\*[-.8pc]
+\underline{\hspace{6in}}
+\\
+\\
+\begin{tabular}{ p{2cm} l }
+  {\bf Actual}  & {\bf Sr. Software Engineer en \href{http://www.intel.com}{Intel}.}\\ 
+				
+  {\bf Pasado}& 	{\bf Software Engineer en \href{http://www.nimbuzz.com/en/about}{Nimbuzz}.}\\
+			& 	{\bf Miembro del Consejo de Ingenier\'ia en Computaci\'on en } \\
+			& 	{\bf la Universidad Nacional de C\'ordoba.}\\ \\
+			& 	{\bf Software Engineer en Motorola Argentina}\\
+			& 	{\bf Trabajo independiente en desarrollo de software y mantenimiento.}\\
+			&	Desde 2007. Trabaj\'e en proyectos para la optimizaci\'on de aplicaciones\\
+			& 	en sistemas multiprocesador.\\
+			& 	{\bf Laboratorio de Arquitectura de Computadoras, UNC}\\
+			& 	Pasant\'ia de Investigaci\'on, Desde Marzo/2006 hasta Octubre/2007.\\
+			& 	$\triangleright$ Optimizaci\'on de aplicaciones cient\'ificas sobre arquitecturas multiprocesador\\
+			& 	utilizando MPI, HPF y OpenMP.\\
+			& 	$\triangleright$ Testing de sistemas embebidos para aplicaciones de electro medicina.\\
+			& 	{\bf Testing del procesador JOP y JDK}\\
+			& 	Trabaj\'e durante 2007 para Martin Schoeberl de la Universidad Tecnol\'ogica de\\
+			&	Viena, Austria.\\
+			& 	{\bf Optimizaci\'on de Software Cient\'ifico.}\\
+			& 	Trabaj\'e para Gerardo Hillman del Laboratorio de Recursos Hidr\'icos de la \\
+			& 	Universidad Nacional de C\'ordoba, Argentina.\\
+				
+\end{tabular} 
+\\\\
+{\bf Publications} \\*[-.8pc]
+\underline{\hspace{6in}} \\
+$\triangleright$ Using JOP to build a chip multiprocessor JVM for embedded realtime systems. Annals of CACIC, 2007.\\
+%$\triangleright$ Optimization of a bidimensional hydrodynamic model. ENIEF, 2009.\\
+$\triangleright$ Optimization of an hydrodynamical bidimensional model. \href{http://enief2009.pladema.net/index.html}{ENIEF 2009}. \\
+
+
+{\bf Becas y Premios} \\*[-.8pc]
+\underline{\hspace{6in}} \\
+%\begin{itemize}
+%\renewcommand{\labelitemi}{$\star$}
+%\item
+$\triangleright$ Beca concedidad para completar el trabajo final de carrera.
+Otorgada por la Agencia C\'ordoba Ciencia, 2006.\\ 
+%\item
+$\triangleright$ Distinci\'on al mejor promedio de la Especialidad.
+Otorgado por el Colegio de Ingenieros Especialistas de C\'ordoba, 2007.\\
+%\end{itemize}
+
+{\large \bf Idiomas} \\*[-.8pc]
+\underline{\hspace{6in}} \\
+
+{\bf Espa\~{n}ol}\\
+$\triangleright$ Nativo.
+\\
+
+{\bf Alem\'an}\\
+$\triangleright$ Completados los dos primeros a\~{n}os en el Departamento Cultural de la Facultad de Lenguas, UNC. 
+
+ \\
+
+{
+{\bf Ingl\'es}\\
+$\triangleright$ TOEFL iBT. Calificaci\'on 110/120, Marzo 2008.\\
+$\triangleright$ First Certificate Examination grade B. Otorgado por la  Cambridge University, 2000.\\
+$\triangleright$ Varios cursos tomados desde 1992 hasta 2000.\\
+
+
+{\bf Italiano}\\
+$\triangleright$ Completados los cuatro a\~{n}os en el Departamento Cultural de la Facultad de Lenguas, UNC. 
+\\
+
+{\bf Franc\'es}\\
+$\triangleright$ Curso de un a\~{n}o en "Alliance Fran\c caise C\'ordoba", 2000.
+\\
+
+
+
+{\large \bf Experiencia Docente} \\*[-.8pc]
+\underline{\hspace{6in}} \\
+{\bf Programaci\'on Concurrente}\\
+Facultad de Ingenier\'ia, 2004.
+\\
+{\bf Ayudante alumno en An\'alisis Matem\'atico II}\\
+Escuela de Ingenier\'ia Electr\'onica y Computaci\'on, 2003.
+\\
+
+{\large \bf Participaci\'on como expositor en charlas y conferencias} \\*[-.8pc]
+\underline{\hspace{6in}} \\
+{\bf  ENIEF, Congress on Numerical Methods and their Applications, 2009.}\\
+T\'itulo: Optimization of an hydrodynamical bidimensional model. 
+\\
+{\bf  Segundas conferencias abiertas en Ingenier\'ia en Computaci\'on Univesidad Nacional de C\'ordoba.}\\
+T\'itulo: Programaci\'on Paralela.
+\\
+{\bf  Primeras conferencias abiertas en Ingenier\'ia en Computaci\'on Univesidad Nacional de C\'ordoba.}\\
+T\'itulo: A multiprocessor JVM based on JOP.
+\\
+{{\bf  XIII Argentinian Congress on Computer Science}\\
+T\'itulo: Using JOP to build a chip multiprocessor JVM for embedded real-time systems.}
+\\
+
+{\large \bf Tiempo Libre} \\*[-.8pc]
+\underline{\hspace{6in}} \\
+$\triangleright$ Trekking.\\
+$\triangleright$ Guitarrista amateur.\\
+\\
+\end{document}
+
+
+
+
