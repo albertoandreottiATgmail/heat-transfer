@@ -2,6 +2,7 @@
 \documentclass[a4paper,11pt,english]{article}
 \usepackage{ifsym}
 \usepackage[dvipdfm, hypertex]{hyperref}
+\usepackage{graphicx}
 \oddsidemargin=.15in
 \evensidemargin=.15in
 \textwidth=6in
@@ -13,13 +14,20 @@
 \usepackage{ifthen}
 \newboolean{DEBUG}
 \setboolean{DEBUG}{true}
-
+\usepackage{multicol}
 \begin{document}
 
+\begin{multicols}{2}
 \begin{center}
-{\Large Jose Pablo Alberto Andreotti} \\[.5pc]
-(54) 351-4730292 $\;$ albertoandreotti\verb|@|gmail.com $\;$ (54) 351-156526363 \\[3pc]
+\hspace{155mm}
+
+{\Large Jose Pablo Alberto Andreotti} \\
+(54) 351-4730292 $\;$ albertoandreotti\verb|@|gmail.com $\;$ \\(54) 351-155937792 \\[3pc]
+\columnbreak
 \end{center}
+\includegraphics[hiresbb=false,bb= 0 30 102mm 124mm, scale=0.37, clip=true,keepaspectratio=true]{beto.jpg}
+\end{multicols}
+
 {\large \bf Personal Information} \\*[-.8pc]
 \underline{\hspace{6in}} \\
 \\
