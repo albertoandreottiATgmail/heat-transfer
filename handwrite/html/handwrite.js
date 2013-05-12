@@ -1,175 +1,113 @@
 var ctx, w, h;
-
 var canvas, drawing=false, prevX=0, currX=0, prevY=0, currY=0, dot_flag=false;
-
 var timer;
-
 var clear = false;
-
 var maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
-
 var trainDigit = 0;
-
 var scaled;
-
 var letfound;
-
 var person = "someGuy";
 
 
 
 function Handwrite(canvas, letterFound, wordFound) {
 
-	
 
 	letfound = letterFound;	
-
 	this.canvas = canvas;
-
 	this.letterHandle = letterFound;
-
 	this.wordHandler = wordFound;
-
 	ctx=canvas.getContext("2d");
-
 	w=canvas.width;
+    h=canvas.height;
 
-    	h=canvas.height;
-
-	canvas.addEventListener("mousemove", function(e){ findxy('move',e)}, false);
-
-    	canvas.addEventListener("mousedown", function(e){ findxy('down',e)}, false);
-
-    	canvas.addEventListener("mouseup", function(e){ findxy('up',e)}, false);
-
+    if(navigator.userAgent.match(/Android/i)){
+        canvas.addEventListener("touchmove", function(e){ findxy('move',e)}, false);
+        canvas.addEventListener("touchstart", function(e){ findxy('down',e)}, false);
+        canvas.addEventListener("touchend", function(e){ findxy('up',e)}, false);
+    }
+    else{
+        canvas.addEventListener("mousemove", function(e){ findxy('move',e)}, false);
+        canvas.addEventListener("mousedown", function(e){ findxy('down',e)}, false);
+        canvas.addEventListener("mouseup", function(e){ findxy('up',e)}, false);
         canvas.addEventListener("mouseout", function(e){ findxy('out',e)}, false);
+    }
 
 }
 
 
 
 function draw()
-
 {
-
     ctx.beginPath();
-
     ctx.moveTo(prevX,prevY);
-
     ctx.lineTo(currX,currY);
-
     ctx.strokeStyle=x;
-
     ctx.lineWidth=y;
-
     ctx.stroke();
-
     ctx.closePath();
-
 }
 
 function erase()
-
 {
-
     var m=confirm("Want to clear");
-
     if(m)
-
     {
-
         ctx.clearRect(0,0,w,h);
-
         document.getElementById("canvasimg").style.display="none";
-
     }
-
 }
-
-
-
-
 
 /*this one is used to send training data to the server*/
 
 function send()
-
 {
-
 	var a = document.getElementById('trainDigit');
-
 	trainDigit = a.value;
+    person=document.getElementById('person').value;
 
-        person=document.getElementById('person').value;
-
-
-
-        postImage(runLengthEncodeColumn(scaled));
-
-	maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
-
-
-
- 
-
+    postImage(runLengthEncodeColumn(scaled));
+    maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
  }
 
 function findxy(res,e)
-
 {
 
-    //Press mouse down
+    var clientY = e.clientY + window.scrollY;
+    var clientX = e.clientX + window.scrollX;
 
-    if(res=='down') {
-
-        prevX=currX;prevY=currY;
-
-        currX=e.clientX-canvas.offsetLeft;
-
-        currY=e.clientY-canvas.offsetTop;
-
-	//Start timer
-
-        clearTimeout(timer);
-
-        timer = setTimeout(processBuffer, 600);
-
-        clear = false;
-
-
-
-        drawing=true;
-
-        dot_flag=true;
-
-     	
-
-        if(dot_flag){
-
-
-
-            ctx.beginPath();
-
-            ctx.fillStyle=x;
-
-            ctx.fillRect(currX,currY,2,2);
-
-            ctx.closePath();
-
-            dot_flag=false;
-
-         }
-
+    /*Fetch these values from somewhere else in Android*/
+    if(navigator.userAgent.match(/Android/i)){
+        clientY = e.targetTouches[0].clientY;
+        clientX = e.targetTouches[0].clientX; // - window.scrollX;
     }
 
-            
+    //Press mouse down
+    if(res=='down') {
+        prevX=currX;prevY=currY;
+        currX=clientX-canvas.offsetLeft;
+        currY=clientY-canvas.offsetTop;
+	    
+		//Start timer
+        clearTimeout(timer);
+        timer = setTimeout(processBuffer, 600);
+        clear = false;
+        drawing=true;
+        dot_flag=true;
+
+        if(dot_flag){
+            ctx.beginPath();
+            ctx.fillStyle=x;
+            ctx.fillRect(currX,currY,2,2);
+            ctx.closePath();
+            dot_flag=false;
+         }
+    }
+           
 
     //Press mouse up
-
     if(res=='up'||res=="out"){
-
                 drawing=false; 
-
     } 
 
   
@@ -177,45 +115,26 @@ function findxy(res,e)
     //Move mouse
 
     if(res=='move') {
-
         if(drawing) {
-
             //if timeout hasn't fired, reset it.
-
             if(!clear) {
-
                 clearTimeout(timer);
-
                 timer = setTimeout(processBuffer, 700);
+            }
+            prevX=currX;
+            prevY=currY;
 
-				}
+            currX=e.clientX-canvas.offsetLeft;
+            currY=e.clientY-canvas.offsetTop;
 
-                prevX=currX;
-
-                prevY=currY;
-
-                currX=e.clientX-canvas.offsetLeft;
-
-                currY=e.clientY-canvas.offsetTop;
-
-				
-
-                maxX = currX>maxX ? currX : maxX;
-
-                maxY = currY>maxY ? currY : maxY;
-
-                minX = currX<minX ? currX : minX;
-
-                minY = currY<minY ? currY : minY;
-
-				
-
-                draw();
+            maxX = currX>maxX ? currX : maxX;
+            maxY = currY>maxY ? currY : maxY;
+            minX = currX<minX ? currX : minX;
+            minY = currY<minY ? currY : minY;
+            draw();
 
         }
-
     }
-
 }
 
 function max(x, y) {
@@ -228,68 +147,40 @@ function max(x, y) {
 
 function processBuffer() {
 
-	
-
 	clear = true;
-
-	
-
 	var width = maxX-minX;
-
 	var height = maxY-minY;
-        var diff = height-width;
-        var frame = 0.20;
+    var diff = height-width;
+    var frame = 0.20;
 
-        /*make a squared image*/
-
+    /*make a squared image*/
 	minX = minX - Math.floor(diff/2);
-        maxX = minX + Math.floor(diff/2);
+    maxX = minX + Math.floor(diff/2);
         
-        /*frame the image, at this point height==width*/
-        minX = Math.floor(minX - frame*height);
-
+    /*frame the image, at this point height==width*/
+    minX = Math.floor(minX - frame*height);
 	maxX = Math.floor(maxX + frame*height);
-
 	minY = Math.floor(minY - frame*height);
-
 	maxY = Math.floor(maxY + frame*height);
-
-	
 
 	//width = maxX-minX;
 
 	height = maxY-minY;
 
-		
-
 	//TODO: this image data will have to come from the current buffer
 
 	var imgData = ctx.getImageData(minX, minY, height, height);
 
-	
-
-	//var scaled = scaleImageData(imgData,factor);
-
+//var scaled = scaleImageData(imgData,factor);
 	scaled = nn_resize(imgData, height, height, 20, 20);
-
 	//TODO: this step should be removed, used for debugging
-
 	ctx.putImageData(scaled, 10, 370);  
-
-	
-
 	if(trainDigit == 0) {
-
 		postImage(runLengthEncodeColumn(scaled));
-
 		maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
-
 	}
 
 }
-
-
-
 
 
 /*takes an imageData and encodes it using run length enconding, return an array of tuples (numZeroes, value)*/
