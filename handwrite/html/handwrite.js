@@ -17,10 +17,19 @@ function Handwrite(canvas, letterFound, wordFound) {
 	ctx=canvas.getContext("2d");
 	w=canvas.width;
     	h=canvas.height;
-	canvas.addEventListener("mousemove", function(e){ findxy('move',e)}, false);
-    	canvas.addEventListener("mousedown", function(e){ findxy('down',e)}, false);
-    	canvas.addEventListener("mouseup", function(e){ findxy('up',e)}, false);
-        canvas.addEventListener("mouseout", function(e){ findxy('out',e)}, false);
+
+        if(navigator.userAgent.match(/Android/i)){	        
+            canvas.addEventListener("touchmove", function(e){ findxy('move',e)}, false);
+    	    canvas.addEventListener("touchstart", function(e){ findxy('down',e)}, false);
+      	    canvas.addEventListener("touchend", function(e){ findxy('up',e)}, false);
+            canvas.addEventListener("touchend", function(e){ findxy('out',e)}, false);
+        }
+        else{
+	    canvas.addEventListener("mousemove", function(e){ findxy('move',e)}, false);
+            canvas.addEventListener("mousedown", function(e){ findxy('down',e)}, false);
+            canvas.addEventListener("mouseup", function(e){ findxy('up',e)}, false);
+            canvas.addEventListener("mouseout", function(e){ findxy('out',e)}, false);
+        }
 }
 
 function draw()
@@ -40,6 +49,7 @@ function erase()
     {
         ctx.clearRect(0,0,w,h);
         document.getElementById("canvasimg").style.display="none";
+        maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
     }
 }
 
@@ -58,11 +68,21 @@ function send()
  }
 function findxy(res,e)
 {
+    
+    var clientY = e.clientY + window.scrollY;
+    var clientX = e.clientX + window.scrollX;
+    
+    /*Fetch these values from somewhere else in Android*/
+    if(navigator.userAgent.match(/Android/i)){
+        clientY = e.targetTouches[0].clientY;
+        clientX = e.targetTouches[0].clientX; // - window.scrollX;
+    }
     //Press mouse down
     if(res=='down') {
+        maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
         prevX=currX;prevY=currY;
-        currX=e.clientX-canvas.offsetLeft;
-        currY=e.clientY-canvas.offsetTop;
+        currX=clientX-canvas.offsetLeft;
+        currY=clientY-canvas.offsetTop;
 	//Start timer
         clearTimeout(timer);
         timer = setTimeout(processBuffer, 600);
@@ -83,7 +103,7 @@ function findxy(res,e)
             
     //Press mouse up
     if(res=='up'||res=="out"){
-                drawing=false; 
+                drawing=false;
     } 
   
     //Move mouse
@@ -96,8 +116,8 @@ function findxy(res,e)
 				}
                 prevX=currX;
                 prevY=currY;
-                currX=e.clientX-canvas.offsetLeft;
-                currY=e.clientY-canvas.offsetTop;
+                currX=clientX-canvas.offsetLeft;
+                currY=clientY-canvas.offsetTop;
 				
                 maxX = currX>maxX ? currX : maxX;
                 maxY = currY>maxY ? currY : maxY;
@@ -114,25 +134,27 @@ function max(x, y) {
 
 function processBuffer() {
 	
-	clear = true;
-	/*frame the image*/
+        clear = true;
+
 	var width = maxX-minX;
 	var height = maxY-minY;
-	var frame = 0.20;
-	minX = Math.floor(minX - frame*width);
-	maxX = Math.floor(maxX + frame*width);
+        var diff = height-width;
+        var frame = 0.20;
+
+        /*make a squared image*/
+	minX = minX - Math.floor(diff/2);
+        maxX = minX + Math.floor(diff/2);
+        
+        /*frame the image, at this point height==width*/
+        minX = Math.floor(minX - frame*height);
+	maxX = Math.floor(maxX + frame*height);
 	minY = Math.floor(minY - frame*height);
 	maxY = Math.floor(maxY + frame*height);
-	
-	width = maxX-minX;
+
+	//width = maxX-minX;
 	height = maxY-minY;
-	
-	
-	var diff = height-width;
 	//TODO: this image data will have to come from the current buffer
-	var imgData = ctx.getImageData(Math.floor(minX-diff/2), minY, height, height);
-	//TODO: this factor should be changed according to imgData
-	
+	var imgData = ctx.getImageData(minX, minY, height, height);
 	//var scaled = scaleImageData(imgData,factor);
 	scaled = nn_resize(imgData, height, height, 20, 20);
 	//TODO: this step should be removed, used for debugging
@@ -233,21 +255,24 @@ function scaleImageData(imageData, scale) {
 }
 
 
-
 function nn_resize(pixels,w1,h1,w2,h2) { 
-	var temp = ctx.createImageData(w2, h2);
+    var temp = ctx.createImageData(w2, h2);
     var x_ratio = w1/w2;
     var y_ratio = h1/h2;
-    var px = 0;
-	var	py = 0; 
+    lastCeilY = 0;
+    lastCeilX = 0;
 	
-	for (var i=0; i<h2-1; i++) {
-        py = Math.floor(i*y_ratio);
-		for (var j=1; j<w2-1; j++) {
-            px = Math.floor(j*x_ratio);
-            //temp.data[(i*w2+j)*4 + 3] = pixels.data[(py*w1+px)*4 + 3]
-			temp.data[(i*w2+j)*4 + 3] = (pixels.data[(py*w1+px)*4 + 3] + pixels.data[((py-1)*w1+px)*4 + 3] + pixels.data[((py+1)*w1+px)*4 + 3] + pixels.data[(py*w1+px-1)*4 + 3] + pixels.data[(py*w1+px+1)*4 + 3])
-        }
+    for (var i=0; i<h2; i++) {
+        for (var j=0; j<w2; j++) {
+            for (var k=lastCeilX; k<lastCeilX+x_ratio; k++) {
+                for (var l=lastCeilY; l<lastCeilY+y_ratio; l++) {
+                    temp.data[(i*w2+j)*4 + 3] += pixels.data[(l*w1+k)*4 + 3];
+				}
+			}
+			lastCeilX = Math.ceil((j+1)*x_ratio);
+		}
+		lastCeilX = 0;
+		lastCeilY = Math.ceil((i+1)*y_ratio);
     }
-	return temp;
+    return temp;
 }
