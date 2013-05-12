@@ -151,7 +151,7 @@ function processBuffer() {
 	var width = maxX-minX;
 	var height = maxY-minY;
     var diff = height-width;
-    var frame = 0.20;
+    var frame = 0.10;
 
     /*make a squared image*/
 	minX = minX - Math.floor(diff/2);
@@ -159,9 +159,9 @@ function processBuffer() {
         
     /*frame the image, at this point height==width*/
     minX = Math.floor(minX - frame*height);
-	maxX = Math.floor(maxX + frame*height);
+	maxX = Math.ceil(maxX + frame*height);
 	minY = Math.floor(minY - frame*height);
-	maxY = Math.floor(maxY + frame*height);
+	maxY = Math.ceil(maxY + frame*height);
 
 	//width = maxX-minX;
 
