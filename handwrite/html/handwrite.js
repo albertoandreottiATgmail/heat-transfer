@@ -124,8 +124,8 @@ function findxy(res,e)
             prevX=currX;
             prevY=currY;
 
-            currX=e.clientX-canvas.offsetLeft;
-            currY=e.clientY-canvas.offsetTop;
+            currX=clientX-canvas.offsetLeft;
+            currY=clientY-canvas.offsetTop;
 
             maxX = currX>maxX ? currX : maxX;
             maxY = currY>maxY ? currY : maxY;
