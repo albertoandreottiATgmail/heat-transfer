@@ -177,8 +177,8 @@ function processBuffer() {
 	ctx.putImageData(scaled, 10, 370);  
 	if(trainDigit == 0) {
 		postImage(runLengthEncodeColumn(scaled));
-		maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
 	}
+	maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
 
 }
 
