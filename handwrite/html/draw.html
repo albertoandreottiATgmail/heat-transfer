@@ -8,8 +8,10 @@ var x="black",y=2;
 var handwrite;
 
 function letterFound(data){
-
-    alert(data.match("pred.*") );
+    
+    var number = data.match("pred.*")
+    if (number=="10") number = "0";
+    alert(number );
     console.log(data);
 }
 
