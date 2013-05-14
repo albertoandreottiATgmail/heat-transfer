@@ -10,7 +10,7 @@ var handwrite;
 function letterFound(data){
     
     var number = data.match("pred.*")
-    if (number=="10") number = "0";
+    number[0]= number[0].replace("10", "0");
     alert(number );
     console.log(data);
 }
