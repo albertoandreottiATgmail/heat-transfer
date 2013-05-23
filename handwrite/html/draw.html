@@ -8,10 +8,13 @@ var x="black",y=2;
 var handwrite;
 
 function letterFound(data){
-    
+
+    //alert(data.match("pred.*") );
     var number = data.match("pred.*")
     number[0]= number[0].replace("10", "0");
-    alert(number );
+    
+    var old = document.getElementById('myTextarea').value;
+    document.getElementById('myTextarea').value = old + number[0].substring(8, 9);
     console.log(data);
 }
 
@@ -21,6 +24,8 @@ function wordFound(letter){
 
 function init()
 {
+    var textarea = document.getElementById('myTextarea');
+    textarea.style.fontSize = "26px";
     canvas=document.getElementById('can');
     handwrite = new Handwrite(canvas, letterFound, wordFound);
 	
@@ -34,10 +39,17 @@ function init()
 	<h1>Handwrite recognition demo</h1>
 
 	<p>Use your mouse to draw digits on the canvas!</p>
-    <canvas id="can" width="400"height="400" style="position:absolute;top:40%;left:30%;border:2px solid;"></canvas>
+        <canvas id="can" width="400"height="400" style="position:absolute;top:22%;left:40%;border:2px solid;"></canvas>
 	<p>The handwriting used to train it looks like below, </p>
 	<img src="digits.png" alt="The handwriting used to train it looks like that.">
+        
+
     <input type="button" value="save" id="btn" size="30" onclick="save()"style="position:absolute;top:75%;left:1%;">
     <input type="button" value="clear" id="clr" size="23" onclick="erase()"style="position:absolute;top:75%;left:7%;">
+
+    <textarea rows="2" cols="24" id="myTextarea" style="position:absolute;top:7%;left:40%;border:2px solid;">
+    
+    </textarea>
+
 </body>
 </html>
