@@ -1,4 +1,4 @@
-var ctx, w, h;
+var handwrite.ctx, w, h;
 var canvas, drawing=false, prevX=0, currX=0, prevY=0, currY=0, dot_flag=false;
 var timer;
 var clear = false;
@@ -40,13 +40,13 @@ function Handwrite(canvas, letterFound, wordFound) {
 
 function draw()
 {
-    ctx.beginPath();
-    ctx.moveTo(prevX,prevY);
-    ctx.lineTo(currX,currY);
-    ctx.strokeStyle=x;
-    ctx.lineWidth=y;
-    ctx.stroke();
-    ctx.closePath();
+    handwrite.ctx.beginPath();
+    handwrite.ctx.moveTo(prevX,prevY);
+    handwrite.ctx.lineTo(currX,currY);
+    handwrite.ctx.strokeStyle=x;
+    handwrite.ctx.lineWidth=y;
+    handwrite.ctx.stroke();
+    handwrite.ctx.closePath();
 }
 
 function erase()
@@ -54,7 +54,7 @@ function erase()
     var m=confirm("Want to clear");
     if(m)
     {
-        ctx.clearRect(0,0,w,h);
+        handwrite.ctx.clearRect(0,0,w,h);
         document.getElementById("canvasimg").style.display="none";
     }
 }
@@ -97,10 +97,10 @@ function findxy(res,e)
         dot_flag=true;
 
         if(dot_flag){
-            ctx.beginPath();
-            ctx.fillStyle=x;
-            ctx.fillRect(currX,currY,2,2);
-            ctx.closePath();
+            handwrite.ctx.beginPath();
+            handwrite.ctx.fillStyle=x;
+            handwrite.ctx.fillRect(currX,currY,2,2);
+            handwrite.ctx.closePath();
             dot_flag=false;
          }
     }
@@ -161,12 +161,12 @@ function processBuffer() {
 	height = maxY-minY;
 
 	//TODO: this image data will have to come from the current buffer
-	var imgData = ctx.getImageData(minX, minY, height, height);
+	var imgData = handwrite.ctx.getImageData(minX, minY, height, height);
 
     //var scaled = scaleImageData(imgData,factor);
 	scaled = nn_resize(imgData, height, height, 20, 20);
 	//TODO: this step should be removed, used for debugging
-	ctx.putImageData(scaled, 10, 370);  
+	handwrite.ctx.putImageData(scaled, 10, 370);  
 	if(trainDigit == 0) {
 		postImage(runLengthEncodeColumn(scaled));
 	}
@@ -238,7 +238,7 @@ function postImage(samples){
 
 function scaleImageData(imageData, scale) {
 
-  var scaled = ctx.createImageData(imageData.width * scale, imageData.height * scale);
+  var scaled = handwrite.ctx.createImageData(imageData.width * scale, imageData.height * scale);
 
   for(var row = 0; row < imageData.height; row++) {
     for(var col = 0; col < imageData.width; col++) {
@@ -268,7 +268,7 @@ function scaleImageData(imageData, scale) {
 
 function nn_resize(pixels,w1,h1,w2,h2) { 
     
-    var temp = ctx.createImageData(w2, h2);
+    var temp = handwrite.ctx.createImageData(w2, h2);
     var x_ratio = w1/w2;
     var y_ratio = h1/h2;
     lastCeilY = 0;
