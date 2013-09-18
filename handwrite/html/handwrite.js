@@ -231,7 +231,7 @@ function postImage(samples){
 					    var number = data.match("pred.*")
                         number[0]= number[0].replace("10", "0");
 						//call the handler
-						handwrite.letterHandler(data);
+						handwrite.letterHandler(number[0].substring(8, 9));
 					});
 }
 
