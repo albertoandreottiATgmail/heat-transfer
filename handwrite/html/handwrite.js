@@ -5,19 +5,18 @@ var clear = false;
 var maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
 var trainDigit = 0;
 var scaled;
-var letfound;
+//var letfound;
+var handwrite;
 var person = "someGuy";
 
 
 
 function Handwrite(canvas, letterFound, wordFound) {
 
-
-	letfound = letterFound;	
 	this.canvas = canvas;
-	this.letterHandle = letterFound;
+	this.letterHandler = letterFound;
 	this.wordHandler = wordFound;
-	ctx=canvas.getContext("2d");
+	this.ctx=canvas.getContext("2d");
 	w=canvas.width;
     h=canvas.height;
 
@@ -32,6 +31,8 @@ function Handwrite(canvas, letterFound, wordFound) {
         canvas.addEventListener("mouseup", function(e){ findxy('up',e)}, false);
         canvas.addEventListener("mouseout", function(e){ findxy('out',e)}, false);
     }
+	
+	handwrite = this;
 
 }
 
@@ -104,7 +105,6 @@ function findxy(res,e)
          }
     }
            
-
     //Press mouse up
     if(res=='up'||res=="out"){
                 drawing=false; 
@@ -139,8 +139,6 @@ function max(x, y) {
 	return x>y? x: y;
 
 }
-
-
 
 function processBuffer() {
 
@@ -232,7 +230,7 @@ function postImage(samples){
 					processData: false,
 					contentType: false
 					}).done(function(data) {
-						letfound(data);
+						handwrite.letterHandler(data);
 					});
 }
 
