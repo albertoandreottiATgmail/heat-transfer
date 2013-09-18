@@ -1,0 +1,33 @@
+{
+    "title": "WebOctave test script",
+    "description" : "This script is used to test the input and outputs",
+    "timeout" : 10000,
+    "source_public" : "0",
+    "results_unfold" : "0",
+    "figures_unfold" : "1",
+    "files_unfold" : "0",
+    "parameters" :
+    {
+        "the_double":
+        {
+            "caption" : "double value",
+            "description" : "a double value between -10 and 10",
+            "type"    : "double",
+            "unit"    : "mm",
+            "min"     : "-10",
+            "max"     : "10",
+            "preset" : "3.14159265358979"
+        },
+        "the_matrix" :
+        {
+            "caption" : "matrix",
+            "description" : "an ordinal Matlab matrix of doubles",
+            "type"    : "matrix",
+            "min"     : "-1000",
+            "max"     : "1000",
+            "default" : "[1,0;1,2]",
+            "rows"    : "",
+            "columns" : ""
+        }
+    }
+}
