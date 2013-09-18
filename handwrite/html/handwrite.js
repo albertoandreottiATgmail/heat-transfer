@@ -1,4 +1,4 @@
-var handwrite.ctx, w, h;
+var w, h;
 var canvas, drawing=false, prevX=0, currX=0, prevY=0, currY=0, dot_flag=false;
 var timer;
 var clear = false;
