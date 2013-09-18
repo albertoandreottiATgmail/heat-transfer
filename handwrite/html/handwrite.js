@@ -110,10 +110,7 @@ function findxy(res,e)
                 drawing=false; 
     } 
 
-  
-
     //Move mouse
-
     if(res=='move') {
         if(drawing) {
             //if timeout hasn't fired, reset it.
@@ -163,15 +160,12 @@ function processBuffer() {
 	minY = Math.floor(minY - frame*height);
 	maxY = Math.ceil(maxY + frame*height);
 
-	//width = maxX-minX;
-
 	height = maxY-minY;
 
 	//TODO: this image data will have to come from the current buffer
-
 	var imgData = ctx.getImageData(minX, minY, height, height);
 
-//var scaled = scaleImageData(imgData,factor);
+    //var scaled = scaleImageData(imgData,factor);
 	scaled = nn_resize(imgData, height, height, 20, 20);
 	//TODO: this step should be removed, used for debugging
 	ctx.putImageData(scaled, 10, 370);  
@@ -179,126 +173,67 @@ function processBuffer() {
 		postImage(runLengthEncodeColumn(scaled));
 	}
 	maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
-
 }
 
 
 /*takes an imageData and encodes it using run length enconding, return an array of tuples (numZeroes, value)*/
-
 function runLengthEncodeRow(imageData) {
-
-	
-
 	var encoded = [];
-
 	var zeroCount = 0;
-
 	var index = 0;
-
-	
-
 	for(var i = 3; i<imageData.data.length; i = i+4){
-
 		if(imageData.data[i] == 0)
-
 			zeroCount++;
-
 		else {
-
 			encoded[index++] = zeroCount;
-
-			encoded[index++] = 1;//imageData.data[i];
-
+			encoded[index++] = 1;
 			zeroCount = 0;
-
 		}
-
 	}
-
 	return encoded;
-
 }
 
 
-
-
-
 /*takes an imageData and encodes it using run length enconding, return an array of tuples (numZeroes, value)*/
-
 function runLengthEncodeColumn(imageData) {
-
-	
-
 	var encoded = [];
-
 	var zeroCount = 0;
-
 	var index = 0;
-
-	
 
 	for(var j = 3; j<80 ; j=j+4){
-
 		for(var i = j; i<imageData.data.length; i = i+80){
-
 			if(imageData.data[i] == 0)
-
 				zeroCount++;
-
 			else {
-
 				encoded[index++] = zeroCount;
-
 				encoded[index++] = 1;//imageData.data[i];
-
 				zeroCount = 0;
-
 			}
-
 		}
-
 	}
 
 	return encoded;
-
 }
 
 
 
 function postImage(samples){		
 
-			
-
     var fd = new FormData();
-
     fd.append('image', '[' + samples.toString() + ']');
-
     fd.append('trainDigit', trainDigit.toString());
-
     fd.append('$', 'draw');
-
     fd.append('person', person);
 
     $.ajax({
-
 					type: 'POST',
-
 					url: "/index.php",
-
 					data: fd,
-
 					processData: false,
-
 					contentType: false
-
 					}).done(function(data) {
-
 						letfound(data);
-
 					});
-
-
-
 }
 
 
@@ -307,59 +242,31 @@ function scaleImageData(imageData, scale) {
 
   var scaled = ctx.createImageData(imageData.width * scale, imageData.height * scale);
 
-
-
   for(var row = 0; row < imageData.height; row++) {
-
     for(var col = 0; col < imageData.width; col++) {
-
       var sourcePixel = [
-
         imageData.data[(row * imageData.width + col) * 4 + 0],
-
         imageData.data[(row * imageData.width + col) * 4 + 1],
-
         imageData.data[(row * imageData.width + col) * 4 + 2],
-
         imageData.data[(row * imageData.width + col) * 4 + 3]
-
       ];
 
       for(var y = 0; y < scale; y++) {
-
         var destRow = row * scale + y;
-
         for(var x = 0; x < scale; x++) {
-
           var destCol = col * scale + x;
-
           for(var i = 0; i < 4; i++) {
-
             scaled.data[(destRow * scaled.width + destCol) * 4 + i] =
-
               sourcePixel[i];
-
           }
-
         }
-
       }
-
     }
-
   }
-
-
 
   return scaled;
 
 }
-
-
-
-
-
-
 
 function nn_resize(pixels,w1,h1,w2,h2) { 
     

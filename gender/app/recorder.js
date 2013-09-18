@@ -33,21 +33,6 @@
 				filtered[j] =	filtered[i]*1000;
 				filtered[j] = filtered[j].toPrecision(6);			
 			}	
-			/*
-			worker.postMessage({
-								command: 'record',
-								buffer: [
-									e.inputBuffer.getChannelData(0),
-									e.inputBuffer.getChannelData(1)
-								]
-								});
-								
-			worker.postMessage({
-								command: 'exportWAV',
-								type: type
-								});
-			
-			*/
 			//post samples as strings!
 			postSamples(filtered.slice(1, 32000));
 		}
@@ -64,7 +49,6 @@
 		$.ajax({
 					type: 'POST',
 					url: "http://ec2-54-242-178-145.compute-1.amazonaws.com/index.php",
-					//$: 'gender',
 					data: fd,
 					processData: false,
 					contentType: false
