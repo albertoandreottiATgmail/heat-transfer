@@ -5,7 +5,6 @@ var clear = false;
 var maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
 var trainDigit = 0;
 var scaled;
-//var letfound;
 var handwrite;
 var person = "someGuy";
 
@@ -35,8 +34,6 @@ function Handwrite(canvas, letterFound, wordFound) {
 	handwrite = this;
 
 }
-
-
 
 function draw()
 {
@@ -230,6 +227,10 @@ function postImage(samples){
 					processData: false,
 					contentType: false
 					}).done(function(data) {
+					    //minor corrections to cope with NN coding.
+					    var number = data.match("pred.*")
+                        number[0]= number[0].replace("10", "0");
+						//call the handler
 						handwrite.letterHandler(data);
 					});
 }
