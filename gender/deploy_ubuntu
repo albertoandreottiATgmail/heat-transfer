@@ -1,0 +1,2 @@
+sudo cp ./app/* /var/www/app/
+sudo cp ./gender/* /var/www/sources/gender/
