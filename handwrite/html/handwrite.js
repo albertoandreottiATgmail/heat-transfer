@@ -142,15 +142,15 @@ function processBuffer() {
 	clear = true;
 	var width = maxX-minX;
 	var height = maxY-minY;
-    var diff = height-width;
-    var frame = 0.10;
+	var diff = height-width;
+	var frame = 0.10;
 
-    /*make a squared image*/
+	/*make a squared image*/
 	minX = minX - Math.floor(diff/2);
-    maxX = minX + Math.floor(diff/2);
+	maxX = minX + Math.floor(diff/2);
         
-    /*frame the image, at this point height==width*/
-    minX = Math.floor(minX - frame*height);
+	/*frame the image, at this point height==width*/
+	minX = Math.floor(minX - frame*height);
 	maxX = Math.ceil(maxX + frame*height);
 	minY = Math.floor(minY - frame*height);
 	maxY = Math.ceil(maxY + frame*height);
@@ -160,13 +160,13 @@ function processBuffer() {
 	//TODO: this image data will have to come from the current buffer
 	var imgData = handwrite.ctx.getImageData(minX, minY, height, height);
 
-    //var scaled = scaleImageData(imgData,factor);
+	//var scaled = scaleImageData(imgData,factor);
 	scaled = nn_resize(imgData, height, height, 20, 20);
 	//TODO: this step should be removed, used for debugging
 	handwrite.ctx.putImageData(scaled, 10, 370);  
 	if(trainDigit == 0) {
 		postImage(runLengthEncodeColumn(scaled));
-	}
+    }
 	maxX = 0, maxY = 0, minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;
 }
 
