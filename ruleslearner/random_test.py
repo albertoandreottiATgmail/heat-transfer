@@ -24,7 +24,7 @@ mySet.addDefinition(att2)  # time
 mySet.addDefinition(att3)  # location
 parameters = [att1, att2, att3]
 
-#add 25 random attributes
+#add 10 random attributes
 random_factory = RandomAttributeFactory(1000)
 for idx in range(1, 10):
     rndatt = random_factory.getNext()
@@ -55,7 +55,7 @@ for a in range(1,200):
     learner.addSample(['off', 'night', 'home'] + map( lambda x: x.sample(), parameters[3:]), parameters)
 
 # add some random noise 
-for a in range(1, 60):
+for a in range(1, 70):
     learner.addSample(map( lambda x: x.sample(), parameters), parameters)
     
 rules = learner.infer(parameters)

@@ -43,7 +43,7 @@ class RandomAttributeFactory(object):
         self._next = self._next + 1
 
         #assign a random number of values from 2 to 14
-        str_list = map(str, range(1, random.randint(2, 4)))
+        str_list = map(str, range(1, random.randint(2, 5)))
         map(randomAtt.add, str_list)
 
         return randomAtt

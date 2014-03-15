@@ -84,6 +84,7 @@ class TreeLearner(Classifier):
         assert(used[0] == True)
         
         minfo = [0] * len(self._parameters)
+        
         #compute mutual information between the class and each attribute
         for idx in range(0, len(self._parameters)):
             if not used[idx]:
@@ -98,6 +99,7 @@ class TreeLearner(Classifier):
                     for target in self._parameters[0].getValues():
                         prob = float(len(filter(lambda x: x[0] == target, subset)))/len(subset)
                         entropy += prob * log(prob + 0.00001) 
+                    
                     #-P(B=b).H(A|B=b)
                     minfo[idx] += -val_prob * entropy
             else:
@@ -109,7 +111,8 @@ class TreeLearner(Classifier):
         return min(enumerate(minfo), key=lambda x: x[1])[0]
     
     def prune(self, rules):
-        return map(lambda x: x.prune(self._prunset, self._parameters), rules)
+        prunedRules = map(lambda x: x.prune(self._prunset, self._parameters), rules)
+        return list(set(prunedRules))
 
             
 class Node(object):
@@ -130,10 +133,11 @@ class Node(object):
         
         #children_list = filter(lambda x: x != None, children_list)
         #Add my clause to every rule
+        local_result = []
         for rule in children_list:
-            rule.addClause(self._att, self._val)        
+            local_result.append(rule.addClause(self._att, self._val))        
         
-        return children_list
+        return local_result
     
     #Better interface to not expose recursion to clients
     def getRules(self):
@@ -151,12 +155,9 @@ class Leaf(Node):
         self._targetVal = targetVal
     
     def _addClause(self):
+        
         if self._outcome is 1:
-            rule = Rule()
-            rule.addClause(self._att, self._val)
-            rule.setTarget(self._targetAtt, self._targetVal)
-            return [rule] 
-        #something better?
-        else:
-            return []
+            rule = Rule(self._targetAtt, self._targetVal)
+            return [rule.addClause(self._att, self._val)] 
+        return []
         
