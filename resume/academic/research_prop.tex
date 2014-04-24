@@ -1,0 +1,113 @@
+%\documentstyle{article}
+\documentclass[letter,12pt,english]{article}
+\special{papersize=8.5in,12in}
+
+\usepackage{ifsym}
+\usepackage[dvipdfm, hypertex]{hyperref}
+\oddsidemargin=.15in
+\evensidemargin=.15in
+\textwidth=6in
+\topmargin=-.5in
+\textheight=9in
+\parindent=0in
+\pagestyle{plain}
+
+
+\begin{document}
+
+
+
+
+{ \hfill \today \\ \\ 
+Prof. Guojun Lu\\
+Gippsland Campus\\
+FedUni\\
+\\
+\\
+
+\large
+\bf Research proposal} \\*[-.8pc]
+\\
+\\
+
+This document describes a research proposal for the project "Image Search and Retrieval" in charge of Prof. Guojun Lu
+at FedUni, Australia. This document is divided in two parts; the first describing a potential research path for
+the algorithmic problems and a second one describing a proposal for an infrastructure to efficiently perform queries
+on large image datasets.\\\\
+{\bf Image Retrieval}\\\\
+Approaches to image information retrieval based solely on natural language descriptions of the images not only suffer
+from the problem that such descriptions may not always be available but also the process of matching images according
+to user descriptions may lead to undesired results. Users may produce different statements even for the same image
+according to their mood, the context of the image or other factors that are hard to capture without the
+intervention of a human. An effort to overcome this high variability in results obtained by crowd sourcing text 
+description of images is explored by Socher\cite{socher} et al., where the authors propose a method to segment,
+annotate and classify images based on deep architectures.\\
+Besides outperforming state of the art methods in similar image tasks, deep architectures provide also a means
+of learning hierarchical
+levels of features with each level providing a further sophistication in the abstraction used to describe the data.
+In this way, detected parts of the image in low layers can be recursively composed in higher layers to convey a 
+higher level of representation. These abstractions can be used to better match one image to another.\\
+Although this approach removes the problems of relying only on low level feature to understand an image, there's
+still an improvement that could potentially be applied to the solution.\\
+Deep architectures are good learning high level features over low level ones in an unsupervised manner. However,
+they still require labelling of the data to be trained successfully. To overcome this problem one may think of latent
+variable methods such as the one proposed in\cite{lda} for natural language documents. In these models, the different
+topics in which documents are classified are learnt as part of the training process, not depending on hand labelled
+data. Then the similarity between two documents can be assessed by computing comparing how much each document
+belongs to a topic class.\\
+So, a desiderata for a method in image similarity would include the hierarchical abstraction power of deep
+architectures, the unsupervised learning capabilities of latent variable models, and a method to retrieve
+images fast. A really promising approach has been proposed by Hinton and Krizhevsky\cite{hinton} where the
+authors not only propose a means to address image similarity in an unsupervised fashion, but also a way of
+retrieving similar images using semantic hashing\cite{hinton1}.\\
+In this approach, many levels of features are learnt, and these features are used to initialize autoencoders.
+The autoencoders are then used to map each image to a binary word. Similar images map to similar binary words.
+To retrieve images that are similar to a query image, the binary code is computed for the query image, and
+small modifications are performed in the code to obtain the addresses of the similar images.\\
+Another approach to image similarity would be to train deep neural networks to classify objects and then use
+the activity vectors from the last hidden layer to compare between images. Although this leads to excellent
+results as can be seen in \cite{hinton2}, it is a supervised method, and does not have the advantages from
+semantic hashing.\\
+Another related problem is how to include the captions in the retrieval process when they are available, 
+how to decide when the captions are relevant, and what to do when captions are missing. To have an idea
+of how complex this problem can be we can use figure where we see two images with the same objects but
+different captions and meaning.
+Explore how captions can be used in a query. Add caption to query image.\\
+
+Still a method that meets all the above mentioned requirements needs to be found, and needs to be tested
+in an experimental environment to asses for generalization in new datasets and suitability in adapting
+to practical computing infrastructures.} among them.\\
+
+
+\bf Infrastructure} \\*[-.8pc]
+\\
+\\
+
+Although the idea of semantic hashing for image retrieval is a great contribution because it allows for constant
+time retrieval of similar images independently of the database size, more research must be done to study how
+these techniques can handle a wider variety of use cases beyond matching objects and also on how they can be
+implemented in a production environment where large scale retrieval, perhaps in real time, must be provided.\\
+Graph databases.
+
+
+
+
+  \begin{thebibliography}{1}
+
+  \bibitem{socher} Parsing Natural Scenes and Natural Language with Recursive Neural Networks, Richard Socher,
+  Cliff Lin, Andrew Y. Ng, and Christopher D. Manning. 
+
+  \bibitem{lda} Probabilistic topic models. Steyvers, M. \& Griffiths, T. (2007).
+
+  \bibitem{hinton1} Using Very Deep Autoencoders for Content-Based Image Retrieval. Krizhevsky, A. and Hinton, G.E.(2011). 
+  
+  \bibitem{hinton2} ImageNet Classification with Deep Convolutional Neural Networks. Krizhevsky, A. and Hinton, G.E.(2011). 
+  
+  \end{thebibliography}
+
+
+\end{document}
+
+
+
+
