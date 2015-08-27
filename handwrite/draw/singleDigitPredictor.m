@@ -1,6 +1,3 @@
-%% ================ Part 2: Loading Parameters ================
-% In this part of the exercise, we load some pre-initialized 
-% neural network parameters.
 %decode the run length encoded image
 1;
 function decoded = runLengthDecode(image)
@@ -8,7 +5,7 @@ function decoded = runLengthDecode(image)
 	decoded = zeros(1,400);
 	for i = 1:2:size(image,2)
 		decoded(count + image(i)) = 1;
-		count = count + image(i)+1;
+		count = count + image(i) + 1;
 	end
 end
 
@@ -31,7 +28,7 @@ function smoothed = smooth(image)
 	end
 end
 
-function main(image, trainDigit, person)
+function pred = main(image, trainDigit, person)
 	fprintf('\nLoading Saved Neural Network Parameters ...\n')
 
 	% Load the weights into variables Theta1 and Theta2
@@ -50,11 +47,11 @@ function main(image, trainDigit, person)
 	%decoded = smooth(decoded);
 
 	pred = predict(Theta1, Theta2, decoded)
-	trainDigit	
+	trainDigit;	
 	if trainDigit != 0
             trainVector = [decoded, trainDigit]; 	
 	    %save image as training data
-            person	
+            person;	
 	    %save -append -ascii /media/sf_ImageProcessing/+person+.dat trainVector;
             save("-append", "-ascii", ["/media/sf_ImageProcessing/", person, ".dat"], "trainVector");
 	end
