@@ -1,0 +1,5 @@
+Alberto Andreotti studied Computer Engineering at National University of Cordoba, where he completed the program in record time, and ranking among the highest GPAs. After that he proceeded to work for different companies like Motorola, Intel, Samsung, and some start-ups.
+Although he started in the Embedded Systems field, he made his way into working with a broader set of technologies like Distributed Systems, High Performance Computing, and Machine Learning.
+Currently, he works creating back-end solutions that scale Machine Learning algorithms to a large number of users.
+He enjoys coding in Scala and Python, and leading teams of engineers to accomplish complex goals in a fast-paced environment.
+Finally, Alberto likes the outdoors, typically he visits the lake in the weekends and practices some kayaking with his wife Gaby.
